@@ -1,9 +1,9 @@
 //
-//  Entity2.cpp
+//  Bullet.cpp
 //  Flocking Spaceships
 //
-//  Created by Kelvin Hu on 11/11/16.
+//  Created by Kelvin Hu on 11/14/16.
 //  Copyright © 2016 Kelvin Hu. All rights reserved.
 //
 
-#include "Entity2.hpp"
+#include "Bullet.hpp"
