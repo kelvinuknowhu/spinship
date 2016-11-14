@@ -8,6 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		B60201E31DD494EA00D4FEE1 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60201E21DD494EA00D4FEE1 /* main.cpp */; };
+		B60201EA1DD4950900D4FEE1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B60201E91DD4950900D4FEE1 /* OpenGL.framework */; };
+		B60201EC1DD4969A00D4FEE1 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B60201EB1DD4969A00D4FEE1 /* SDL2.framework */; };
+		B60201EE1DD496B300D4FEE1 /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B60201ED1DD496B300D4FEE1 /* SDL2_image.framework */; };
+		B60201FE1DD5B09000D4FEE1 /* LTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60201FC1DD5B09000D4FEE1 /* LTexture.cpp */; };
+		B627115D1DD9684200C9B3C0 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B627115B1DD9684200C9B3C0 /* Entity.cpp */; };
+		B62711631DD9BB3A00C9B3C0 /* Bullet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B62711611DD9BB3A00C9B3C0 /* Bullet.cpp */; };
+		B690E6A21DD619A500193155 /* Leader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B690E6A01DD619A500193155 /* Leader.cpp */; };
+		B690E6A51DD61BA900193155 /* Vector2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B690E6A31DD61BA900193155 /* Vector2.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +33,20 @@
 /* Begin PBXFileReference section */
 		B60201DF1DD494EA00D4FEE1 /* Flocking Spaceships */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Flocking Spaceships"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B60201E21DD494EA00D4FEE1 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		B60201E91DD4950900D4FEE1 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		B60201EB1DD4969A00D4FEE1 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
+		B60201ED1DD496B300D4FEE1 /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = ../../../../../Library/Frameworks/SDL2_image.framework; sourceTree = "<group>"; };
+		B60201FB1DD4D66E00D4FEE1 /* img */ = {isa = PBXFileReference; lastKnownFileType = folder; path = img; sourceTree = "<group>"; };
+		B60201FC1DD5B09000D4FEE1 /* LTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LTexture.cpp; sourceTree = "<group>"; };
+		B60201FD1DD5B09000D4FEE1 /* LTexture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LTexture.hpp; sourceTree = "<group>"; };
+		B627115B1DD9684200C9B3C0 /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
+		B627115C1DD9684200C9B3C0 /* Entity.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Entity.hpp; sourceTree = "<group>"; };
+		B62711611DD9BB3A00C9B3C0 /* Bullet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bullet.cpp; sourceTree = "<group>"; };
+		B62711621DD9BB3A00C9B3C0 /* Bullet.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Bullet.hpp; sourceTree = "<group>"; };
+		B690E6A01DD619A500193155 /* Leader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Leader.cpp; sourceTree = "<group>"; };
+		B690E6A11DD619A500193155 /* Leader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Leader.hpp; sourceTree = "<group>"; };
+		B690E6A31DD61BA900193155 /* Vector2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vector2.cpp; sourceTree = "<group>"; };
+		B690E6A41DD61BA900193155 /* Vector2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Vector2.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +54,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B60201EE1DD496B300D4FEE1 /* SDL2_image.framework in Frameworks */,
+				B60201EC1DD4969A00D4FEE1 /* SDL2.framework in Frameworks */,
+				B60201EA1DD4950900D4FEE1 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41,6 +66,9 @@
 		B60201D61DD494EA00D4FEE1 = {
 			isa = PBXGroup;
 			children = (
+				B60201ED1DD496B300D4FEE1 /* SDL2_image.framework */,
+				B60201EB1DD4969A00D4FEE1 /* SDL2.framework */,
+				B60201E91DD4950900D4FEE1 /* OpenGL.framework */,
 				B60201E11DD494EA00D4FEE1 /* Flocking Spaceships */,
 				B60201E01DD494EA00D4FEE1 /* Products */,
 			);
@@ -57,7 +85,18 @@
 		B60201E11DD494EA00D4FEE1 /* Flocking Spaceships */ = {
 			isa = PBXGroup;
 			children = (
+				B60201FB1DD4D66E00D4FEE1 /* img */,
+				B60201FD1DD5B09000D4FEE1 /* LTexture.hpp */,
+				B60201FC1DD5B09000D4FEE1 /* LTexture.cpp */,
+				B627115C1DD9684200C9B3C0 /* Entity.hpp */,
+				B627115B1DD9684200C9B3C0 /* Entity.cpp */,
+				B690E6A11DD619A500193155 /* Leader.hpp */,
+				B690E6A01DD619A500193155 /* Leader.cpp */,
 				B60201E21DD494EA00D4FEE1 /* main.cpp */,
+				B62711621DD9BB3A00C9B3C0 /* Bullet.hpp */,
+				B62711611DD9BB3A00C9B3C0 /* Bullet.cpp */,
+				B690E6A31DD61BA900193155 /* Vector2.cpp */,
+				B690E6A41DD61BA900193155 /* Vector2.hpp */,
 			);
 			path = "Flocking Spaceships";
 			sourceTree = "<group>";
@@ -89,7 +128,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0710;
-				ORGANIZATIONNAME = "Kelvin HuKelvin";
+				ORGANIZATIONNAME = "Kelvin Hu";
 				TargetAttributes = {
 					B60201DE1DD494EA00D4FEE1 = {
 						CreatedOnToolsVersion = 7.1;
@@ -118,6 +157,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B690E6A51DD61BA900193155 /* Vector2.cpp in Sources */,
+				B62711631DD9BB3A00C9B3C0 /* Bullet.cpp in Sources */,
+				B627115D1DD9684200C9B3C0 /* Entity.cpp in Sources */,
+				B690E6A21DD619A500193155 /* Leader.cpp in Sources */,
+				B60201FE1DD5B09000D4FEE1 /* LTexture.cpp in Sources */,
 				B60201E31DD494EA00D4FEE1 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -207,6 +251,10 @@
 		B60201E71DD494EA00D4FEE1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -214,6 +262,10 @@
 		B60201E81DD494EA00D4FEE1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -237,6 +289,7 @@
 				B60201E81DD494EA00D4FEE1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

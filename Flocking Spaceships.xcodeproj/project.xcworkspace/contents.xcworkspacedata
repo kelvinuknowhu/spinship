@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:Flocking Spaceships.xcodeproj">
+      location = "self:/Users/Kelvin/Desktop/Game_Programming/Flocking Spaceships/Flocking Spaceships.xcodeproj">
    </FileRef>
 </Workspace>
