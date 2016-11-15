@@ -22,6 +22,7 @@
 #include <string>
 #include "Leader.hpp"
 #include "Entity.hpp"
+#include "Bullet.hpp"
 
 #define WINDOW_WIDTH 960
 #define WINDOW_HEIGHT 720
@@ -42,14 +43,23 @@ Leader* leader1;
 Leader* leader2;
 
 
-const string LEADER_ENTITY_PATH = "/Users/Kelvin/Desktop/Game_Programming/Flocking\ Spaceships/Flocking\ Spaceships/img/enemy-entity.png";
+const string LEADER_ENTITY_PATH = "/Users/Kelvin/Desktop/Game_Programming/Flocking\ Spaceships/Flocking\ Spaceships/img/leader-entity.png";
 const string ENEMY_ENTITY_PATH = "/Users/Kelvin/Desktop/Game_Programming/Flocking\ Spaceships/Flocking\ Spaceships/img/enemy-entity.png";
+const string BULLET_PATH  = "/Users/Kelvin/Desktop/Game_Programming/Flocking\ Spaceships/Flocking\ Spaceships/img/bullet.png";
+
 
 const int LEADER_ENTITY_ANIMATION_FRAMES = 1;
 SDL_Rect leaderEntityClips[LEADER_ENTITY_ANIMATION_FRAMES];
 vector<Entity*> leader1Entities;
 vector<Entity*> leader2Entities;
 
+
+
+const int BULLET_WIDTH  = 36;
+const int BULLET_HEIGHT = 70;
+const int BULLET_ANIMATION_FRAMES = 4;
+SDL_Rect bulletClips[BULLET_ANIMATION_FRAMES];
+vector<Bullet*> bullets;
 
 
 bool init();
@@ -61,18 +71,21 @@ int main(int argc, const char * argv[]) {
     
     Vector2 leader1_init_position = Vector2(200, WINDOW_HEIGHT/2);
     Vector2 leader2_init_position = Vector2(600, WINDOW_HEIGHT/2);
-
-    leader1 = new Leader(leader1_init_position, 1.0, 0, 1.0, 150, 50, 1, WINDOW_WIDTH, WINDOW_HEIGHT);
-    leader2 = new Leader(leader2_init_position, 1.0, 0, 1.0, 150, 50, 1, WINDOW_WIDTH, WINDOW_HEIGHT);
+    
+    const int MAX_NUM_ENTITIES = 10;
+    leader1 = new Leader(leader1_init_position, 1.0, 0, 150, 50, MAX_NUM_ENTITIES, LEADER_ENTITY_ANIMATION_FRAMES, WINDOW_WIDTH, WINDOW_HEIGHT);
+    leader2 = new Leader(leader2_init_position, 1.0, 180, 150, 50, MAX_NUM_ENTITIES, LEADER_ENTITY_ANIMATION_FRAMES, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     for (int i = 0; i < 10; i++) {
-        Vector2 init_position = Vector2(100, 100+50*i);
-        leader1Entities.push_back(new Entity(init_position, 1.0, 2.0, 0.0, 1, WINDOW_WIDTH, WINDOW_HEIGHT));
+        Vector2 init_position = Vector2(100, 100 + 50*i);
+        float speed = 1.0;
+        float max_speed = 5.0;
+        leader1Entities.push_back(new Entity(init_position, speed, max_speed, 1, WINDOW_WIDTH, WINDOW_HEIGHT));
     }
     
     for (int i = 0; i < 10; i++) {
-        Vector2 init_position = Vector2(700, 100+50*i);
-        leader2Entities.push_back(new Entity(init_position, 1.0, 2.0, 0.0, 1, WINDOW_WIDTH, WINDOW_HEIGHT));
+        Vector2 init_position = Vector2(700, 100 + 50*i);
+        leader2Entities.push_back(new Entity(init_position, 1.0, 5.0, 1, WINDOW_WIDTH, WINDOW_HEIGHT));
     }
 
     
@@ -90,10 +103,10 @@ int main(int argc, const char * argv[]) {
             bool done = false;
             SDL_Event event;
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            float lastFrameTicks = 0.0f;
 
-            
-            
+            int NUM_BULLETS_LIMIT = 1;
+            float previousFrameTime = 0;
+
             bool gameOver = false;
 //            bool gameWin = false;
             while (!done) {
@@ -104,6 +117,10 @@ int main(int argc, const char * argv[]) {
                     
                 }
                 
+                float currentTime = (float) SDL_GetTicks() / 1000.0f;
+                previousFrameTime = currentTime;
+                
+                
                 if (!gameOver) {
                     SDL_SetRenderDrawColor(renderer, 240, 240, 240, 255);
                     SDL_RenderClear(renderer);
@@ -112,26 +129,36 @@ int main(int argc, const char * argv[]) {
                     leader1->render(leader1->position.x, leader1->position.y, NULL);
                     leader2->render(leader2->position.x, leader2->position.y, NULL);
 
-
-                    float ticks = (float) SDL_GetTicks() / 1000.0f;
-                    float elapsed = ticks - lastFrameTicks;
-                    lastFrameTicks = ticks;
                     
+                    // Set target position for each entity
+                    for (Entity* e : leader1Entities) {
+                        e->targetPosition = leader1->calculateEntityPosition();
+                        leader1->numEntities++;
+                        if (leader1->numEntities >= leader1->numEntitiesMax)
+                            leader1->numEntities = 0;
+                    }
+                    for (Entity* e : leader2Entities) {
+                        e->targetPosition = leader2->calculateEntityPosition();
+                        leader2->numEntities++;
+                        if (leader2->numEntities >= leader2->numEntitiesMax)
+                            leader2->numEntities = 0;
+                    }
+                    
+                    
+                    // Update position for each entity
                     for (Entity* e : leader1Entities) {
                         e->render(e->position.x, e->position.y, NULL);
                         e->setAngle(leader1->angle);
                         Vector2 sep = e->separateEntites(leader1Entities);
                         e->applyForce(sep);
-                        e->updatePosition(elapsed, leader1);
-
+                        e->updatePosition(leader1);
                     }
-                    
                     for (Entity* e : leader2Entities) {
                         e->render(e->position.x, e->position.y, NULL);
                         e->setAngle(leader2->angle);
                         Vector2 sep = e->separateEntites(leader2Entities);
                         e->applyForce(sep);
-                        e->updatePosition(elapsed, leader2);
+                        e->updatePosition(leader2);
                         
                     }
                 
@@ -153,6 +180,40 @@ int main(int argc, const char * argv[]) {
                     if (KEYS[SDL_SCANCODE_RIGHT])
                     {   // rotate plane right
                         leader1->updateAngle(-1);
+                    }
+                    
+                    
+                    SDL_PollEvent(&event);
+                    if (event.key.keysym.sym == SDLK_SPACE && event.type == SDL_KEYUP && NUM_BULLETS_LIMIT > 0) {
+                        
+                        leader1->center.x = leader1->position.x + leader1->getTextureWidth() ;
+                        leader1->center.y = leader1->position.y + leader1->getTextureHeight()/2 - 28;
+        
+                        Vector2 position = leader1->center;
+                        
+                        Bullet* tempBullet = new Bullet(position, leader1->angle, BULLET_ANIMATION_FRAMES);
+                        tempBullet->setRenderer(renderer);
+                        tempBullet->loadFromFile(BULLET_PATH);
+                        bullets.push_back(tempBullet);
+                        --NUM_BULLETS_LIMIT;
+                    }
+                    
+                    if (event.key.keysym.sym != SDLK_SPACE)
+                        NUM_BULLETS_LIMIT = 1;
+                    
+                    
+                    for (vector<Bullet*>::iterator it = bullets.begin(); it != bullets.end();) {
+                        Bullet* b = *it;
+                        if (b->offScreen(WINDOW_WIDTH, WINDOW_HEIGHT)) {
+                            bullets.erase(it);
+                            delete b;
+                        }
+                        else {
+                            SDL_Rect* currentClip = &bulletClips[b->currentFrame];
+                            b->render(b->position.x, b->position.y, currentClip);
+                            b->updatePosition();
+                            ++it;
+                        }
                     }
                     
                     
@@ -181,6 +242,18 @@ int main(int argc, const char * argv[]) {
                 }
                 
                 SDL_RenderPresent(renderer);
+                for (Bullet* b : bullets) {
+                    if (currentTime - b->lastFrameTime > 0.1) {
+                        b->lastFrameTime = currentTime;
+                        b->currentFrame++;
+                    
+                        if (b->currentFrame >= BULLET_ANIMATION_FRAMES)
+                            b->currentFrame = 0;
+                    }
+                }
+                
+            
+               
             }
         
         }
@@ -277,7 +350,19 @@ bool loadMedia()
         printf("Failed to load walking sprite texture!\n");
         success = false;
     }
-        
+    
+    
+    if (success) {
+        // Set rectangle dimensions for each bullet animation clip
+        for (int i = 0; i < BULLET_ANIMATION_FRAMES; i++) {
+            SDL_Rect* r = &bulletClips[i];
+            r->x = i * BULLET_WIDTH;
+            r->y = 0;
+            r->w = BULLET_WIDTH;
+            r->h = BULLET_HEIGHT;
+        }
+    }
+    
 
     return success;
 }
@@ -298,6 +383,11 @@ void close() {
     for (Entity* e : leader2Entities) {
         delete e;
         e = NULL;
+    }
+    
+    for (Bullet* b : bullets) {
+        delete b;
+        b = NULL;
     }
     
     // Destroy window

@@ -32,33 +32,29 @@ public:
     bool inFlock;
     bool tooCloseToLeader;
     bool tooFarToLeader;
-    bool movingAway;
-    Vector2 velocity;
+    Vector2 velocity = Vector2(0, 0);
     Vector2 position;
     Vector2 center;
     Vector2 acceleration = Vector2(0, 0);
-    float distance;
-    float previous_distance;
+    Vector2 targetPosition = Vector2(0, 0);
+ 
 
     
     SDL_Rect boundingRectangle;
 
     Entity(Vector2 position, float speed, float maxSpeed,
-           float rotationRadians,
            int nframes, int screenWidth, int screenHeight) : LTexture(nframes)
     {
         this->position = position;
         this->speed = speed;
         this->maxSpeed = maxSpeed;
-        this->rotation = rotationRadians;
         this->detectionDistance = 300;
         this->detectionDistanceSquared = detectionDistance * detectionDistance;
         this->separationDistance = 50;
         this->separationDistanceSquared = separationDistance * separationDistance;
-        this->velocity = Vector2(0, 0);
         this->boundingRectangle = { 0, 0, screenWidth, screenHeight };
-        this->center.x = position.x + getTextureWidth() / 2;
-        this->center.y = position.y + getTextureHeight() / 2;
+        this->center.x = position.x + getTextureWidth()/2;
+        this->center.y = position.y + getTextureHeight()/2;
         this->inFlock = true;
         this->tooCloseToLeader = false;
         this->tooFarToLeader = false;
@@ -74,23 +70,11 @@ public:
      
         
         
-        
-        
     
     
-    void updatePosition(float elapsedTimeSeconds, Leader* leader)
+    void updatePosition(Leader* leader)
     {
-        this->center.x = position.x + getTextureWidth() / 2;
-        this->center.y = position.y + getTextureHeight() / 2;
-        
-        
-        if (distance < leader->separationDistanceSquared)
-        {
-            tooCloseToLeader = true;
-        }
-        
-        
-    
+
         if (tooCloseToLeader) {
             velocity.x = 0;
             velocity.y = 0;
@@ -98,13 +82,24 @@ public:
         
         
         
-      
-        velocity = leader->position - this->position;
+        
+        velocity = targetPosition - center;
+        float distance = velocity.Length();
+        std::cout << distance << std::endl;
+        
+        // To implement: make the more remote entity move faster to the center
+        float scale = velocity.Length() / 600.0f;
+        scale *= 10;
+        
         velocity += this->acceleration;
         velocity.Normalize();
-        velocity.Limit(maxSpeed);
-        position += velocity;
-        this->acceleration *= 0;
+
+        position += velocity * scale;
+        
+        acceleration *= 0;
+        
+        this->center.x = position.x + getTextureWidth() / 2;
+        this->center.y = position.y + getTextureHeight() / 2;
         
     }
     

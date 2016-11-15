@@ -23,54 +23,52 @@ public:
     float speed;
     float maxSpeed;
     float rotation;
-    float scale;
     float detectionDistance;
     float separationDistance;
     float detectionDistanceSquared;
     float separationDistanceSquared;
-    float detectionAreaScale;
-    float seperationAreaScale;
     Vector2 velocity;
     Vector2 position;
     Vector2 center;
     SDL_Rect boundingRectangle;
+    int numEntities;
+    int numEntitiesMax;
 
     
     Leader(Vector2 position, float speed,
-           float rotationRadians, float scale,
-           float detectionDistance, float separationDistance,
+           float initialAngle,
+           float detectionDistance, float separationDistance, int numEntitiesMax,
            int nframes, int screenWidth, int screenHeight) : LTexture(nframes)
     {
         this->position = position;
         this->speed = speed;
-        this->rotation = rotationRadians;
-        this->scale = scale;
+        this->angle = initialAngle;
+        this->rotation = angleToRadian(initialAngle);
         this->detectionDistance = detectionDistance;
         this->detectionDistanceSquared = detectionDistance * detectionDistance;
         this->separationDistance = separationDistance;
         this->separationDistanceSquared = separationDistance * separationDistance;
-        this->velocity = Vector2(0, 0); // this->velocity = Vector2(speed * (float)cos(rotation), speed * (float)sin(rotation));
+        this->velocity = Vector2(0, 0); 
         this->boundingRectangle = { 0, 0, screenWidth, screenHeight };
-        this->center.x = position.x + getTextureWidth() / 2;
-        this->center.y = position.y + getTextureHeight() / 2;
+        this->numEntities = 0;
+        this->numEntitiesMax = numEntitiesMax;
+
     }
     
 
     void updatePosition(int dir)
     {
         this->speed = 5.0;
-        this->center.x = position.x + getTextureWidth() / 2;
-        this->center.y = position.y + getTextureHeight() / 2;
         if (dir == 1)
         {
-            rotation = angle * PI / 180.0;
+            rotation = angleToRadian(angle);
             velocity.x = (float) cos(rotation);
             velocity.y = (float) sin(rotation);
             position += velocity * speed;
 
             
         } else if (dir == -1) {
-            rotation = angle * PI / 180.0;
+            rotation = angleToRadian(angle);
             velocity.x = (float) cos(rotation);
             velocity.y = (float) sin(rotation);
             position -= velocity * speed;
@@ -86,6 +84,8 @@ public:
         if (position.y > boundingRectangle.y + boundingRectangle.h)
             position.y = boundingRectangle.y;
         
+        this->center.x = position.x + getTextureWidth()/2;
+        this->center.y = position.y + getTextureHeight()/2;
   
     }
     
@@ -114,7 +114,21 @@ public:
     }
     
     
+    Vector2 calculateEntityPosition() {
+        center.x = position.x + getTextureWidth()/2;
+        center.y = position.y + getTextureHeight()/2;
+        float avgAngle = 360.0f / numEntitiesMax;
+        float distance = 150.0f;
+        float entityAngle = avgAngle * numEntities;
+        float entityRadian = angleToRadian(entityAngle);
+        Vector2 new_position = center + Vector2(distance * cos(entityRadian), distance * sin(entityRadian));
+        return new_position;
+    }
     
+    
+    float angleToRadian(float angle) {
+        return (float) angle * PI / 180.0f;
+    }
     
 //    void refreshNeighborList(std::vector<Entity> allEntities)
 //    {

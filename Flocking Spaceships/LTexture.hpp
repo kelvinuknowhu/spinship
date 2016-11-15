@@ -58,10 +58,7 @@ public:
     }
 private:
     SDL_Texture* entityTexture;
-    SDL_Texture* areaTexture;
     SDL_Renderer* renderer;
-    int areaTextureWidth;
-    int areaTextureHeight;
     int entityTextureWidth;
     int entityTextureHeight;
     int nframes;

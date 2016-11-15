@@ -26,7 +26,7 @@ public:
 
     //ASSINGMENT AND EQUALITY OPERATIONS
     inline Vector2& operator = (const Vector2& v) { x = v.x; y = v.y; return *this; }
-    inline Vector2& operator = (const float & f) { x = f; y = f; return *this; }
+    inline Vector2& operator = (const float& f) { x = f; y = f; return *this; }
     inline Vector2& operator - (void) { x = -x; y = -y; return *this; }
     inline bool operator == (const Vector2& v) const { return (x == v.x) && (y == v.y); }
     inline bool operator != (const Vector2& v) const { return (x != v.x) || (y != v.y); }
@@ -49,7 +49,7 @@ public:
     inline const Vector2 operator * (float v) const { return Vector2(x * v, y * v); }
     inline const Vector2 operator / (float v) const { return Vector2(x / v, y / v); }
 
-    //SCALER TO THIS OPERATIONS
+    //SCALAR TO THIS OPERATIONS
     inline Vector2& operator += (float v) { x += v; y += v; return *this; }
     inline Vector2& operator -= (float v) { x -= v; y -= v; return *this; }
     inline Vector2& operator *= (float v) { x *= v; y *= v; return *this; }

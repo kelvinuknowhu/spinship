@@ -14,9 +14,6 @@ LTexture::LTexture(int nframes)
     this->entityTexture = NULL;
     this->entityTextureWidth = 0;
     this->entityTextureHeight = 0;
-    this->areaTexture = NULL;
-    this->areaTextureWidth = 0;
-    this->areaTextureHeight = 0;
     this->renderer = NULL;
     this->nframes = nframes;
     this->angle = 0;
@@ -68,10 +65,7 @@ void LTexture::free()
         SDL_DestroyTexture(entityTexture);
         entityTexture = NULL;
     }
-    if (areaTexture != NULL) {
-        SDL_DestroyTexture(areaTexture);
-        areaTexture = NULL;
-    }
+
 }
 
 void LTexture::setColor(Uint8 red, Uint8 green, Uint8 blue)
@@ -80,7 +74,6 @@ void LTexture::setColor(Uint8 red, Uint8 green, Uint8 blue)
     // More specifically, the function set an additional color value
     // multiplied into render copy operations
     SDL_SetTextureColorMod(entityTexture, red, green, blue);
-    SDL_SetTextureColorMod(areaTexture, red, green, blue);
 
 }
 
@@ -88,15 +81,11 @@ void LTexture::setColor(Uint8 red, Uint8 green, Uint8 blue)
 void LTexture::setBlendMode(SDL_BlendMode blending)
 {
     SDL_SetTextureBlendMode(entityTexture, blending);
-    SDL_SetTextureBlendMode(areaTexture, blending);
-
 }
 
 void LTexture::setAlpha(Uint8 alpha)
 {
     SDL_SetTextureAlphaMod(entityTexture, alpha);
-    SDL_SetTextureAlphaMod(areaTexture, alpha);
-
 }
 
 void LTexture::render(int x, int y, SDL_Rect* clip, SDL_Point* center, SDL_RendererFlip flip)
