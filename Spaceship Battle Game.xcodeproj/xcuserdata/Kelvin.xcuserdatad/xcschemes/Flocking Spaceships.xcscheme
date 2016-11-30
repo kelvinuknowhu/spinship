@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B60201DE1DD494EA00D4FEE1"
-               BuildableName = "Flocking Spaceships"
-               BlueprintName = "Flocking Spaceships"
-               ReferencedContainer = "container:Flocking Spaceships.xcodeproj">
+               BuildableName = "Spaceship Battle Game"
+               BlueprintName = "Spaceship Battle Game"
+               ReferencedContainer = "container:Spaceship Battle Game.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B60201DE1DD494EA00D4FEE1"
-            BuildableName = "Flocking Spaceships"
-            BlueprintName = "Flocking Spaceships"
-            ReferencedContainer = "container:Flocking Spaceships.xcodeproj">
+            BuildableName = "Spaceship Battle Game"
+            BlueprintName = "Spaceship Battle Game"
+            ReferencedContainer = "container:Spaceship Battle Game.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -56,9 +56,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B60201DE1DD494EA00D4FEE1"
-            BuildableName = "Flocking Spaceships"
-            BlueprintName = "Flocking Spaceships"
-            ReferencedContainer = "container:Flocking Spaceships.xcodeproj">
+            BuildableName = "Spaceship Battle Game"
+            BlueprintName = "Spaceship Battle Game"
+            ReferencedContainer = "container:Spaceship Battle Game.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -75,9 +75,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B60201DE1DD494EA00D4FEE1"
-            BuildableName = "Flocking Spaceships"
-            BlueprintName = "Flocking Spaceships"
-            ReferencedContainer = "container:Flocking Spaceships.xcodeproj">
+            BuildableName = "Spaceship Battle Game"
+            BlueprintName = "Spaceship Battle Game"
+            ReferencedContainer = "container:Spaceship Battle Game.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

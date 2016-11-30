@@ -84,9 +84,16 @@ public:
         if (position.y > boundingRectangle.y + boundingRectangle.h)
             position.y = boundingRectangle.y;
         
+        updateCenter();
+        
+    }
+    
+    
+    void updateCenter()
+    {
         this->center.x = position.x + getTextureWidth()/2;
         this->center.y = position.y + getTextureHeight()/2;
-  
+
     }
     
     void updateAngle(int dir)
@@ -114,19 +121,11 @@ public:
     }
     
     
-    Vector2 calculateEntityPosition() {
-        center.x = position.x + getTextureWidth()/2;
-        center.y = position.y + getTextureHeight()/2;
-        float avgAngle = 360.0f / numEntitiesMax;
-        float distance = 150.0f;
-        float entityAngle = avgAngle * numEntities;
-        float entityRadian = angleToRadian(entityAngle);
-        Vector2 new_position = center + Vector2(distance * cos(entityRadian), distance * sin(entityRadian));
-        return new_position;
-    }
+ 
     
     
-    float angleToRadian(float angle) {
+    float angleToRadian(float angle)
+    {
         return (float) angle * PI / 180.0f;
     }
     

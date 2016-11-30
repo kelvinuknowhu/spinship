@@ -24,7 +24,7 @@
 #include "Entity.hpp"
 #include "Bullet.hpp"
 
-#define WINDOW_WIDTH 960
+#define WINDOW_WIDTH 1080
 #define WINDOW_HEIGHT 720
 
 using namespace std;
@@ -34,8 +34,13 @@ SDL_Renderer* renderer = NULL;
 
 const Uint8* KEYS = SDL_GetKeyboardState(NULL);
 
-const string LEADER_PATH = "/Users/Kelvin/Desktop/Game_Programming/Flocking\ Spaceships/Flocking\ Spaceships/img/leader-in-area.png";
-const string ENEMY_PATH = "/Users/Kelvin/Desktop/Game_Programming/Flocking\ Spaceships/Flocking\ Spaceships/img/enemy-in-area.png";
+const string BASE_DIRECTORY = "/Users/Kelvin/Desktop/Game_Programming/SpaceshipBattleGame/";
+const string LEADER_PATH = BASE_DIRECTORY + "img/leader-in-area.png";
+const string ENEMY_PATH = BASE_DIRECTORY + "img/enemy-in-area.png";
+const string LEADER_ENTITY_PATH = BASE_DIRECTORY + "img/enemy-entity.png";
+const string ENEMY_ENTITY_PATH = BASE_DIRECTORY + "img/enemy-entity.png";
+const string BULLET_PATH  = BASE_DIRECTORY + "img/bullet.png";
+
 
 const int LEADER_ANIMATION_FRAMES = 1;
 SDL_Rect leaderClips[LEADER_ANIMATION_FRAMES];
@@ -43,12 +48,10 @@ Leader* leader1;
 Leader* leader2;
 
 
-const string LEADER_ENTITY_PATH = "/Users/Kelvin/Desktop/Game_Programming/Flocking\ Spaceships/Flocking\ Spaceships/img/leader-entity.png";
-const string ENEMY_ENTITY_PATH = "/Users/Kelvin/Desktop/Game_Programming/Flocking\ Spaceships/Flocking\ Spaceships/img/enemy-entity.png";
-const string BULLET_PATH  = "/Users/Kelvin/Desktop/Game_Programming/Flocking\ Spaceships/Flocking\ Spaceships/img/bullet.png";
 
 
 const int LEADER_ENTITY_ANIMATION_FRAMES = 1;
+const int ENTITY_MAX_NUM = 5;
 SDL_Rect leaderEntityClips[LEADER_ENTITY_ANIMATION_FRAMES];
 vector<Entity*> leader1Entities;
 vector<Entity*> leader2Entities;
@@ -65,27 +68,33 @@ vector<Bullet*> bullets;
 bool init();
 bool loadMedia();
 void enable2D(int width, int height);
+void draw_rect(float x, float y, float width, float height);
+
 
 int main(int argc, const char * argv[]) {
     
     
-    Vector2 leader1_init_position = Vector2(200, WINDOW_HEIGHT/2);
-    Vector2 leader2_init_position = Vector2(600, WINDOW_HEIGHT/2);
+    Vector2 leader1_init_position = Vector2(200, WINDOW_HEIGHT/2 - 125);
+    Vector2 leader2_init_position = Vector2(800, WINDOW_HEIGHT/2 - 125);
     
     const int MAX_NUM_ENTITIES = 10;
     leader1 = new Leader(leader1_init_position, 1.0, 0, 150, 50, MAX_NUM_ENTITIES, LEADER_ENTITY_ANIMATION_FRAMES, WINDOW_WIDTH, WINDOW_HEIGHT);
     leader2 = new Leader(leader2_init_position, 1.0, 180, 150, 50, MAX_NUM_ENTITIES, LEADER_ENTITY_ANIMATION_FRAMES, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < ENTITY_MAX_NUM; i++) {
         Vector2 init_position = Vector2(100, 100 + 50*i);
         float speed = 1.0;
         float max_speed = 5.0;
-        leader1Entities.push_back(new Entity(init_position, speed, max_speed, 1, WINDOW_WIDTH, WINDOW_HEIGHT));
+        float rotation = 360 * i / ENTITY_MAX_NUM;
+        leader1Entities.push_back(new Entity(init_position, speed, max_speed, 1, rotation, WINDOW_WIDTH, WINDOW_HEIGHT));
     }
     
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < ENTITY_MAX_NUM; i++) {
+        float speed = 1.0;
+        float max_speed = 5.0;
+        float rotation = 360 * i / ENTITY_MAX_NUM;
         Vector2 init_position = Vector2(700, 100 + 50*i);
-        leader2Entities.push_back(new Entity(init_position, 1.0, 5.0, 1, WINDOW_WIDTH, WINDOW_HEIGHT));
+        leader2Entities.push_back(new Entity(init_position, speed, max_speed, 1, rotation, WINDOW_WIDTH, WINDOW_HEIGHT));
     }
 
     
@@ -93,8 +102,6 @@ int main(int argc, const char * argv[]) {
         printf("Failed to initialize!\n");
     } else {
         
-        enable2D(WINDOW_WIDTH, WINDOW_HEIGHT);
-
         if (!loadMedia()) {
             printf("Failed to load media\n");
         } else {
@@ -108,7 +115,6 @@ int main(int argc, const char * argv[]) {
             float previousFrameTime = 0;
 
             bool gameOver = false;
-//            bool gameWin = false;
             while (!done) {
                 while (SDL_PollEvent(&event)) {
                     if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
@@ -122,44 +128,43 @@ int main(int argc, const char * argv[]) {
                 
                 
                 if (!gameOver) {
+                    
+                    // Draw the background
                     SDL_SetRenderDrawColor(renderer, 240, 240, 240, 255);
                     SDL_RenderClear(renderer);
-                
-                
+                    
+                    // Draw the first player
                     leader1->render(leader1->position.x, leader1->position.y, NULL);
+                    leader1->updateCenter();
+                    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 75);
+                    SDL_Rect rect1 = { (int)leader1->center.x, (int)leader1->center.y, 5, 5 };
+                    SDL_RenderFillRect(renderer, &rect1);
+                    
+                    // Draw the second player
                     leader2->render(leader2->position.x, leader2->position.y, NULL);
+                    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 75);
+                    SDL_Rect rect2 = { (int)leader2->center.x, (int)leader2->center.y, 5, 5 };
+                    SDL_RenderFillRect(renderer, &rect2);
+                    leader2->updateCenter();
 
                     
-                    // Set target position for each entity
-                    for (Entity* e : leader1Entities) {
-                        e->targetPosition = leader1->calculateEntityPosition();
-                        leader1->numEntities++;
-                        if (leader1->numEntities >= leader1->numEntitiesMax)
-                            leader1->numEntities = 0;
-                    }
-                    for (Entity* e : leader2Entities) {
-                        e->targetPosition = leader2->calculateEntityPosition();
-                        leader2->numEntities++;
-                        if (leader2->numEntities >= leader2->numEntitiesMax)
-                            leader2->numEntities = 0;
-                    }
-                    
+
                     
                     // Update position for each entity
                     for (Entity* e : leader1Entities) {
+                        e->updateCenter();
                         e->render(e->position.x, e->position.y, NULL);
                         e->setAngle(leader1->angle);
-                        Vector2 sep = e->separateEntites(leader1Entities);
-                        e->applyForce(sep);
+                        e->updateTargetPosition(leader1);
                         e->updatePosition(leader1);
                     }
+                    
                     for (Entity* e : leader2Entities) {
+                        e->updateCenter();
                         e->render(e->position.x, e->position.y, NULL);
                         e->setAngle(leader2->angle);
-                        Vector2 sep = e->separateEntites(leader2Entities);
-                        e->applyForce(sep);
+                        e->updateTargetPosition(leader2);
                         e->updatePosition(leader2);
-                        
                     }
                 
                     
@@ -186,11 +191,7 @@ int main(int argc, const char * argv[]) {
                     SDL_PollEvent(&event);
                     if (event.key.keysym.sym == SDLK_SPACE && event.type == SDL_KEYUP && NUM_BULLETS_LIMIT > 0) {
                         
-                        leader1->center.x = leader1->position.x + leader1->getTextureWidth() ;
-                        leader1->center.y = leader1->position.y + leader1->getTextureHeight()/2 - 28;
-        
                         Vector2 position = leader1->center;
-                        
                         Bullet* tempBullet = new Bullet(position, leader1->angle, BULLET_ANIMATION_FRAMES);
                         tempBullet->setRenderer(renderer);
                         tempBullet->loadFromFile(BULLET_PATH);
@@ -283,7 +284,7 @@ bool init()
         }
         
         // Create window
-        window = SDL_CreateWindow("Flocking Spaceships", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+        window = SDL_CreateWindow("Spaceship Battle Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
         if (window != NULL) {
             // Create an OpenGL context for use with an OpenGL window
             SDL_GLContext context = SDL_GL_CreateContext(window);
@@ -430,4 +431,13 @@ void enable2D(int width, int height) {
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
+void draw_rect(float x, float y, float width, float height)
+{
+    glBegin(GL_QUADS);
+    glVertex2f(x, y);
+    glVertex2f(x + width, y);
+    glVertex2f(x + width, y + height);
+    glVertex2f(x, y + height);
+    glEnd();
+}
 
