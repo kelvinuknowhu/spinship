@@ -35,11 +35,11 @@ SDL_Renderer* renderer = NULL;
 const Uint8* KEYS = SDL_GetKeyboardState(NULL);
 
 const string BASE_DIRECTORY = "/Users/Kelvin/Desktop/Game_Programming/SpaceshipBattleGame/";
-const string LEADER_PATH = BASE_DIRECTORY + "img/minimalistic-plane/leader-in-area.png";
-const string ENEMY_PATH = BASE_DIRECTORY + "img/minimalistic-plane/enemy-in-area.png";
-const string LEADER_ENTITY_PATH = BASE_DIRECTORY + "img/minimalistic-plane/leader-entity.png";
-const string ENEMY_ENTITY_PATH = BASE_DIRECTORY + "img/minimalistic-plane/enemy-entity.png";
-const string BULLET_PATH  = BASE_DIRECTORY + "img/minimalistic-plane/bullet.png";
+const string LEADER1_PATH = BASE_DIRECTORY + "img/battle-plane/playerShip2_orange.png";
+const string LEADER2_PATH = BASE_DIRECTORY + "img/battle-plane/playerShip2_red.png";
+const string LEADER1_ENTITY_PATH = BASE_DIRECTORY + "img/entity-plane/entity_blue.png";
+const string LEADER2_ENTITY_PATH = BASE_DIRECTORY + "img/entity-plane/entity_red.png";
+const string BULLET_PATH  = BASE_DIRECTORY + "img/laser-bullet/laserBlue10.png";
 
 
 const int LEADER_ANIMATION_FRAMES = 1;
@@ -57,11 +57,6 @@ vector<Entity*> leader1Entities;
 vector<Entity*> leader2Entities;
 
 
-
-const int BULLET_WIDTH  = 36;
-const int BULLET_HEIGHT = 70;
-const int BULLET_ANIMATION_FRAMES = 4;
-SDL_Rect bulletClips[BULLET_ANIMATION_FRAMES];
 vector<Bullet*> bullets;
 
 
@@ -78,24 +73,24 @@ int main(int argc, const char * argv[]) {
     Vector2 leader2_init_position = Vector2(800, WINDOW_HEIGHT/2 - 125);
     
     const int MAX_NUM_ENTITIES = 10;
-    leader1 = new Leader(leader1_init_position, 1.0, 0, 150, 50, MAX_NUM_ENTITIES, LEADER_ENTITY_ANIMATION_FRAMES, WINDOW_WIDTH, WINDOW_HEIGHT);
-    leader2 = new Leader(leader2_init_position, 1.0, 180, 150, 50, MAX_NUM_ENTITIES, LEADER_ENTITY_ANIMATION_FRAMES, WINDOW_WIDTH, WINDOW_HEIGHT);
+    leader1 = new Leader(leader1_init_position, 1.0,  90, 150, 50, MAX_NUM_ENTITIES, LEADER_ENTITY_ANIMATION_FRAMES, WINDOW_WIDTH, WINDOW_HEIGHT);
+    leader2 = new Leader(leader2_init_position, 1.0, -90, 150, 50, MAX_NUM_ENTITIES, LEADER_ENTITY_ANIMATION_FRAMES, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    for (int i = 0; i < ENTITY_MAX_NUM; i++) {
-        Vector2 init_position = Vector2(100, 100 + 50*i);
-        float speed = 1.0;
-        float max_speed = 5.0;
-        float rotation = 360 * i / ENTITY_MAX_NUM;
-        leader1Entities.push_back(new Entity(init_position, speed, max_speed, 1, rotation, WINDOW_WIDTH, WINDOW_HEIGHT));
-    }
-    
-    for (int i = 0; i < ENTITY_MAX_NUM; i++) {
-        float speed = 1.0;
-        float max_speed = 5.0;
-        float rotation = 360 * i / ENTITY_MAX_NUM;
-        Vector2 init_position = Vector2(700, 100 + 50*i);
-        leader2Entities.push_back(new Entity(init_position, speed, max_speed, 1, rotation, WINDOW_WIDTH, WINDOW_HEIGHT));
-    }
+//    for (int i = 0; i < ENTITY_MAX_NUM; i++) {
+//        Vector2 init_position = Vector2(100, 100 + 50*i);
+//        float speed = 1.0;
+//        float max_speed = 5.0;
+//        float rotation = 360 * i / ENTITY_MAX_NUM;
+//        leader1Entities.push_back(new Entity(init_position, speed, max_speed, 1, rotation, WINDOW_WIDTH, WINDOW_HEIGHT));
+//    }
+//    
+//    for (int i = 0; i < ENTITY_MAX_NUM; i++) {
+//        float speed = 1.0;
+//        float max_speed = 5.0;
+//        float rotation = 360 * i / ENTITY_MAX_NUM;
+//        Vector2 init_position = Vector2(700, 100 + 50*i);
+//        leader2Entities.push_back(new Entity(init_position, speed, max_speed, 1, rotation, WINDOW_WIDTH, WINDOW_HEIGHT));
+//    }
 
     
     if (!init()) {
@@ -112,7 +107,9 @@ int main(int argc, const char * argv[]) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             int NUM_BULLETS_LIMIT = 1;
+            float currentFrameTime = 0;
             float previousFrameTime = 0;
+            float elapsedTime = 0;
 
             bool gameOver = false;
             while (!done) {
@@ -123,8 +120,10 @@ int main(int argc, const char * argv[]) {
                     
                 }
                 
-                float currentTime = (float) SDL_GetTicks() / 1000.0f;
-                previousFrameTime = currentTime;
+                
+                currentFrameTime = (float) SDL_GetTicks() / 1000.0f;
+                elapsedTime = currentFrameTime - previousFrameTime;
+                previousFrameTime = currentFrameTime;
                 
                 
                 if (!gameOver) {
@@ -133,16 +132,33 @@ int main(int argc, const char * argv[]) {
                     SDL_SetRenderDrawColor(renderer, 240, 240, 240, 255);
                     SDL_RenderClear(renderer);
                     
+                    
+                    
+                    for (vector<Bullet*>::iterator it = bullets.begin(); it != bullets.end();) {
+                        Bullet* b = *it;
+                        if (b->offScreen(WINDOW_WIDTH, WINDOW_HEIGHT)) {
+                            bullets.erase(it);
+                            delete b;
+                        }
+                        else
+                        {
+                            b->render(b->position.x, b->position.y, NULL, renderer);
+                            b->updatePosition();
+                            ++it;
+                        }
+                    }
+                    
+                    
                     // Draw the first player
                     leader1->render(leader1->position.x, leader1->position.y, NULL, renderer);
                     leader1->updateCenter();
-//                    draw_rect((int)leader1->center.x, (int)leader1->center.y, 5, 5);
+                    // draw_rect((int)leader1->center.x, (int)leader1->center.y, 5, 5);
                     
                     
                     // Draw the second player
                     leader2->render(leader2->position.x, leader2->position.y, NULL, renderer);
                     leader2->updateCenter();
-//                    draw_rect((int)leader2->center.x, (int)leader2->center.y, 5, 5);
+                    // draw_rect((int)leader2->center.x, (int)leader2->center.y, 5, 5);
 
                     
                     // Update position for each entity
@@ -184,11 +200,12 @@ int main(int argc, const char * argv[]) {
                     
                     
                     SDL_PollEvent(&event);
-                    if (event.key.keysym.sym == SDLK_SPACE && event.type == SDL_KEYUP && NUM_BULLETS_LIMIT > 0) {
-                        
+                    if (event.key.keysym.sym == SDLK_SPACE && event.type == SDL_KEYUP && NUM_BULLETS_LIMIT > 0)
+                    {
                         Vector2 position = leader1->center;
-                        Bullet* tempBullet = new Bullet(position, leader1->angle, BULLET_ANIMATION_FRAMES);
+                        Bullet* tempBullet = new Bullet(position, leader1->angle);
                         tempBullet->loadFromFile(BULLET_PATH, renderer);
+                        tempBullet->setPosition(position);
                         bullets.push_back(tempBullet);
                         --NUM_BULLETS_LIMIT;
                     }
@@ -197,19 +214,7 @@ int main(int argc, const char * argv[]) {
                         NUM_BULLETS_LIMIT = 1;
                     
                     
-                    for (vector<Bullet*>::iterator it = bullets.begin(); it != bullets.end();) {
-                        Bullet* b = *it;
-                        if (b->offScreen(WINDOW_WIDTH, WINDOW_HEIGHT)) {
-                            bullets.erase(it);
-                            delete b;
-                        }
-                        else {
-                            SDL_Rect* currentClip = &bulletClips[b->currentFrame];
-                            b->render(b->position.x, b->position.y, currentClip, renderer);
-                            b->updatePosition();
-                            ++it;
-                        }
-                    }
+                    
                     
                     
                     // Leader 2 Controller
@@ -237,16 +242,7 @@ int main(int argc, const char * argv[]) {
                 }
                 
                 SDL_RenderPresent(renderer);
-                for (Bullet* b : bullets) {
-                    if (currentTime - b->lastFrameTime > 0.1) {
-                        b->lastFrameTime = currentTime;
-                        b->currentFrame++;
-                    
-                        if (b->currentFrame >= BULLET_ANIMATION_FRAMES)
-                            b->currentFrame = 0;
-                    }
-                }
-                
+
             
                
             }
@@ -307,22 +303,22 @@ bool loadMedia()
     
     
     bool IMGloaded = true;
-    if (!leader1->loadFromFile(LEADER_PATH, renderer)) {
+    if (!leader1->loadFromFile(LEADER1_PATH, renderer)) {
         IMGloaded = false;
     }
     
-    if (!leader2->loadFromFile(ENEMY_PATH, renderer)) {
+    if (!leader2->loadFromFile(LEADER2_PATH, renderer)) {
         IMGloaded = false;
     }
     
     for (Entity* e : leader1Entities) {
-        if (!e->loadFromFile(LEADER_ENTITY_PATH, renderer)) {
+        if (!e->loadFromFile(LEADER1_ENTITY_PATH, renderer)) {
             IMGloaded = false;
         }
     }
     
     for (Entity* e : leader2Entities) {
-        if (!e->loadFromFile(ENEMY_ENTITY_PATH, renderer)) {
+        if (!e->loadFromFile(LEADER2_ENTITY_PATH, renderer)) {
             IMGloaded = false;
         }
     }
@@ -333,17 +329,6 @@ bool loadMedia()
         success = false;
     }
     
-    
-    if (success) {
-        // Set rectangle dimensions for each bullet animation clip
-        for (int i = 0; i < BULLET_ANIMATION_FRAMES; i++) {
-            SDL_Rect* r = &bulletClips[i];
-            r->x = i * BULLET_WIDTH;
-            r->y = 0;
-            r->w = BULLET_WIDTH;
-            r->h = BULLET_HEIGHT;
-        }
-    }
     
 
     return success;

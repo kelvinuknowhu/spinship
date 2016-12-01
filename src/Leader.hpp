@@ -22,7 +22,7 @@ class Leader : public LTexture {
 public:
     float speed;
     float maxSpeed;
-    float rotation;
+    float radian;
     float detectionDistance;
     float separationDistance;
     float detectionDistanceSquared;
@@ -43,7 +43,7 @@ public:
         this->position = position;
         this->speed = speed;
         this->angle = initialAngle;
-        this->rotation = angleToRadian(initialAngle);
+        this->radian = angleToRadian(initialAngle - 90);
         this->detectionDistance = detectionDistance;
         this->detectionDistanceSquared = detectionDistance * detectionDistance;
         this->separationDistance = separationDistance;
@@ -61,26 +61,28 @@ public:
         this->speed = 5.0;
         if (dir == 1)
         {
-            rotation = angleToRadian(angle);
-            velocity.x = (float) cos(rotation);
-            velocity.y = (float) sin(rotation);
+            radian = angleToRadian(angle - 90);
+            velocity.x = (float) cos(radian);
+            velocity.y = (float) sin(radian);
             position += velocity * speed;
-
-            
-        } else if (dir == -1) {
-            rotation = angleToRadian(angle);
-            velocity.x = (float) cos(rotation);
-            velocity.y = (float) sin(rotation);
+        }
+        else if (dir == -1)
+        {
+            radian = angleToRadian(angle - 90);
+            velocity.x = (float) cos(radian);
+            velocity.y = (float) sin(radian);
             position -= velocity * speed;
-
         }
         
         if (position.x < boundingRectangle.x)
             position.x = boundingRectangle.x + boundingRectangle.w;
+        
         if (position.x > boundingRectangle.x + boundingRectangle.w)
             position.x = boundingRectangle.x;
+        
         if (position.y < boundingRectangle.y)
             position.y = boundingRectangle.y + boundingRectangle.h;
+        
         if (position.y > boundingRectangle.y + boundingRectangle.h)
             position.y = boundingRectangle.y;
         
@@ -129,36 +131,7 @@ public:
         return (float) angle * PI / 180.0f;
     }
     
-//    void refreshNeighborList(std::vector<Entity> allEntities)
-//    {
-//        findNewNeighbors(allEntities);
-//    }
-    
-    
-//    void findNewNeighbors(std::vector<Entity> allEntities)
-//    {
-//        for (Entity e : allEntities)
-//        {
-//            if (&e != this && !e.inFlock && position.DistanceSquared(e.position) < detectionDistanceSquared)
-//            {
-//                
-//                
-//                if (std::find(flock.entities.begin(), flock.entities.end(), e) != flock.entities.end())
-//                {
-//                    flock.addMember(e);
-//                    e.flock = flock;
-//                    e.inFlock = true;
-//                }
-//                
-//            }
-//        }
-//    }
-    
-//    void removeFromFlock()
-//    {
-//        flock = NULL;
-//        inFlock = false;
-//    }
+
 };
 
 #endif /* Leader_hpp */

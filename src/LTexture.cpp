@@ -11,9 +11,11 @@
 
 LTexture::LTexture(int nframes)
 {
-    this->entityTexture = NULL;
-    this->entityTextureWidth = 0;
-    this->entityTextureHeight = 0;
+    this->texture = NULL;
+    this->textureWidth = 0;
+    this->textureHeight = 0;
+    this->actualWidth = 0;
+    this->actualHeight = 0;
     this->nframes = nframes;
     this->angle = 0;
 }
@@ -26,40 +28,39 @@ LTexture::~LTexture()
 
 bool LTexture::loadFromFile(std::string pathEntity, SDL_Renderer* renderer)
 {
-    SDL_Texture* newTextureEntity = NULL;
-
+    SDL_Texture* newTexture = NULL;
     
     // Load image at specified path
-    SDL_Surface* loadedSurfaceEntity = IMG_Load(pathEntity.c_str());
-    if (loadedSurfaceEntity == NULL) {
+    SDL_Surface* loadedSurface = IMG_Load(pathEntity.c_str());
+    if (loadedSurface == NULL) {
         printf("Unable to load image %s! SDL_image Error: %s\n", pathEntity.c_str(), IMG_GetError());
     } else {
         // Color key image
-        SDL_SetColorKey(loadedSurfaceEntity, SDL_TRUE, SDL_MapRGB(loadedSurfaceEntity->format, 0xFF, 0xFF, 0xFF));
+        SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0xFF, 0xFF, 0xFF));
         
         // Create texture from surface pixels
-        newTextureEntity = SDL_CreateTextureFromSurface(renderer, loadedSurfaceEntity);
-        if (newTextureEntity == NULL) {
+        newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
+        if (newTexture == NULL) {
             printf("Unable to create texture from %s! SDL_image Error: %s\n", pathEntity.c_str(), IMG_GetError());
         } else {
             // Get image dimensions
-            this->entityTextureWidth  = loadedSurfaceEntity->w;
-            this->entityTextureHeight = loadedSurfaceEntity->h;
+            this->textureWidth  = loadedSurface->w;
+            this->textureHeight = loadedSurface->h;
         }
         // Get rid of loaded surface
-        SDL_FreeSurface(loadedSurfaceEntity);
+        SDL_FreeSurface(loadedSurface);
     }
-    this->entityTexture = newTextureEntity;
-    return (entityTexture != NULL);
+    this->texture = newTexture;
+    return (texture != NULL);
 }
 
 
 void LTexture::free()
 {
-    if (entityTexture != NULL)
+    if (texture != NULL)
     {
-        SDL_DestroyTexture(entityTexture);
-        entityTexture = NULL;
+        SDL_DestroyTexture(texture);
+        texture = NULL;
     }
 
 }
@@ -69,37 +70,44 @@ void LTexture::setColor(Uint8 red, Uint8 green, Uint8 blue)
     // Modulate the exisiting texture rgb
     // More specifically, the function set an additional color value
     // multiplied into render copy operations
-    SDL_SetTextureColorMod(entityTexture, red, green, blue);
+    SDL_SetTextureColorMod(texture, red, green, blue);
 
 }
 
 
 void LTexture::setBlendMode(SDL_BlendMode blending)
 {
-    SDL_SetTextureBlendMode(entityTexture, blending);
+    SDL_SetTextureBlendMode(texture, blending);
 }
 
 void LTexture::setAlpha(Uint8 alpha)
 {
-    SDL_SetTextureAlphaMod(entityTexture, alpha);
+    SDL_SetTextureAlphaMod(texture, alpha);
 }
 
 void LTexture::render(int x, int y, SDL_Rect* clip, SDL_Renderer* renderer, SDL_Point* center, SDL_RendererFlip flip)
 {
+    
+    if (actualWidth == 0 || actualHeight == 0)
+    {
+        actualWidth = textureWidth;
+        actualHeight = textureHeight;
+    }
+    
     // Set rendering space, by default pass in texture width and height
-    SDL_Rect entityRenderQuad = {x, y, this->entityTextureWidth, this->entityTextureHeight};
+    SDL_Rect renderQuad = { x, y, this->actualWidth, this->actualHeight };
 
     
     // Set clip dimensions of rendering if there is a clip
     if (clip != NULL) {
-        entityRenderQuad.w = clip->w;
+        renderQuad.w = clip->w;
+        renderQuad.h = clip->h;
     }
     
     assert(renderer != NULL);
-    assert(entityTexture != NULL);
+    assert(texture != NULL);
 
-    // SDL_RenderCopy(renderer, texture, clip, &renderQuad);
-    SDL_RenderCopyEx(renderer, entityTexture, clip, &entityRenderQuad, this->angle, center, flip);
+    SDL_RenderCopyEx(renderer, texture, clip, &renderQuad, this->angle, center, flip);
 }
 
 

@@ -21,25 +21,28 @@ public:
     Vector2 acceleration;
     float maxSpeed;
     float velocityAngle;
-    float lastFrameTime;
-    int currentFrame;
     int numBulletsMax;
     
     
-    Bullet(Vector2 position, float angle, int nframes) : LTexture(nframes) {
-        this->position = position;
-        this->angle = angle + 90;
-        this->velocityAngle = angle;
-        this->velocity.x = cos(velocityAngle * PI / 180);
-        this->velocity.y = sin(velocityAngle * PI / 180);
+    Bullet(Vector2 _pos, float _angle) : LTexture(1) {
+        this->position = _pos;
+        this->angle = _angle;
+        this->velocityAngle = _angle - 90;
+        this->velocity.x = cos(angleToRadian(velocityAngle));
+        this->velocity.y = sin(angleToRadian(velocityAngle));
         this->acceleration = Vector2(velocity.x, velocity.y);
-        this->maxSpeed = 10.0;
-        this->currentFrame = 0;
-        this->lastFrameTime = 0;
+        this->maxSpeed = 10;
         this->numBulletsMax = 1;
     }
     
-    void updatePosition() {
+    void setPosition(Vector2 _pos)
+    {
+        this->position.x = position.x;
+        this->position.y = position.y - getTextureHeight()/2;
+    }
+    
+    void updatePosition()
+    {
         velocity += acceleration;
         position += velocity;
         if (velocity.x > maxSpeed || velocity.y > maxSpeed) {
@@ -48,21 +51,27 @@ public:
         }
     }
     
-    bool offScreen(int screenWidth, int screenHeight) {
+    bool offScreen(int screenWidth, int screenHeight)
+    {
         if (position.x < 0 || position.x > screenWidth || position.y < 0 || position.y > screenHeight)
             return true;
         return false;
     }
     
-    void setAngle(float angle) {
+    void setAngle(float angle)
+    {
         this->angle = angle;
     }
     
-    void setVelocityAngle(float angle) {
-        this->velocityAngle = angle;
+    void setVelocityAngle(float angle)
+    {
+        this->velocityAngle = angle - 90;
     }
     
-    
+    float angleToRadian(float angle)
+    {
+        return (float) angle * PI / 180.0f;
+    }
     
     
 };

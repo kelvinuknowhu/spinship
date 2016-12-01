@@ -16,6 +16,7 @@
 		B6963D4D1DEEDCCB00EE33CC /* LTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6963D451DEEDCCB00EE33CC /* LTexture.cpp */; };
 		B6963D4E1DEEDCCB00EE33CC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6963D471DEEDCCB00EE33CC /* main.cpp */; };
 		B6963D4F1DEEDCCB00EE33CC /* Vector2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6963D481DEEDCCB00EE33CC /* Vector2.cpp */; };
+		B69F68B71DF04C470053F066 /* Bonus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B69F68B51DF04C470053F066 /* Bonus.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -46,6 +47,8 @@
 		B6963D471DEEDCCB00EE33CC /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		B6963D481DEEDCCB00EE33CC /* Vector2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vector2.cpp; sourceTree = "<group>"; };
 		B6963D491DEEDCCB00EE33CC /* Vector2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Vector2.hpp; sourceTree = "<group>"; };
+		B69F68B51DF04C470053F066 /* Bonus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bonus.cpp; sourceTree = "<group>"; };
+		B69F68B61DF04C470053F066 /* Bonus.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Bonus.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +107,8 @@
 				B6963D471DEEDCCB00EE33CC /* main.cpp */,
 				B6963D481DEEDCCB00EE33CC /* Vector2.cpp */,
 				B6963D491DEEDCCB00EE33CC /* Vector2.hpp */,
+				B69F68B51DF04C470053F066 /* Bonus.cpp */,
+				B69F68B61DF04C470053F066 /* Bonus.hpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -166,6 +171,7 @@
 			files = (
 				B6963D4C1DEEDCCB00EE33CC /* Leader.cpp in Sources */,
 				B6963D4F1DEEDCCB00EE33CC /* Vector2.cpp in Sources */,
+				B69F68B71DF04C470053F066 /* Bonus.cpp in Sources */,
 				B6963D4B1DEEDCCB00EE33CC /* Entity.cpp in Sources */,
 				B6963D4D1DEEDCCB00EE33CC /* LTexture.cpp in Sources */,
 				B6963D4E1DEEDCCB00EE33CC /* main.cpp in Sources */,

@@ -82,7 +82,7 @@ public:
     }
     
     void updateTargetPosition(Leader* leader) {
-        float distance = 2 * getTextureHeight();
+        float distance = getTextureWidth() + getTextureHeight();
         float entityRadian = angleToRadian(rotation);
         Vector2 new_position = leader->center + Vector2(distance * cos(entityRadian), distance * sin(entityRadian));
         targetPosition = new_position;

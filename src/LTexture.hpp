@@ -18,45 +18,69 @@
 
 
 class LTexture {
+    
+private:
+    SDL_Texture* texture;
+    int textureWidth;
+    int textureHeight;
+    int actualWidth;
+    int actualHeight;
+    int nframes;
+   
+    
 public:
-    
     float angle;
-    
+
     LTexture(int nframes);
     ~LTexture();
-    
+    void free();
     bool loadFromFile(std::string pathEntity, SDL_Renderer* renderer);
     
-    void free();
     void setColor(Uint8 red, Uint8 green, Uint8 blue);
     void setBlendMode(SDL_BlendMode blending);
     void setAlpha(Uint8 alpha);
-    
     void render(int x, int y, SDL_Rect* clip, SDL_Renderer* renderer, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
     int getTextureWidth()
     {
-        return entityTextureWidth;
+        return textureWidth;
     }
+    
     int getTextureHeight()
     {
-        return entityTextureHeight;
+        return textureHeight;
+    }
+    
+    int getActualWidth()
+    {
+        return actualWidth;
+    }
+    
+    int getActualHeight()
+    {
+        return actualHeight;
+    }
+    
+    void setActualWidth(int _width)
+    {
+        actualWidth = _width;
+    }
+    
+    void setActualHeight(int _height)
+    {
+        actualHeight = _height;
     }
     
     SDL_Texture* getTexture()
     {
-        return entityTexture;
+        return texture;
     }
     
     int getFrames()
     {
         return nframes;
     }
-private:
-    SDL_Texture* entityTexture;
-    int entityTextureWidth;
-    int entityTextureHeight;
-    int nframes;
+
 };
 
 
