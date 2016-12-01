@@ -35,12 +35,6 @@
 		B60201E91DD4950900D4FEE1 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		B60201EB1DD4969A00D4FEE1 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		B60201ED1DD496B300D4FEE1 /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = ../../../../../Library/Frameworks/SDL2_image.framework; sourceTree = "<group>"; };
-		B6963D381DEEDB9E00EE33CC /* area.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = area.png; sourceTree = "<group>"; };
-		B6963D391DEEDB9E00EE33CC /* bullet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bullet.png; sourceTree = "<group>"; };
-		B6963D3A1DEEDB9E00EE33CC /* enemy-entity.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "enemy-entity.png"; sourceTree = "<group>"; };
-		B6963D3B1DEEDB9E00EE33CC /* enemy-in-area.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "enemy-in-area.png"; sourceTree = "<group>"; };
-		B6963D3C1DEEDB9E00EE33CC /* leader-entity.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "leader-entity.png"; sourceTree = "<group>"; };
-		B6963D3D1DEEDB9E00EE33CC /* leader-in-area.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "leader-in-area.png"; sourceTree = "<group>"; };
 		B6963D3F1DEEDCCB00EE33CC /* Bullet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bullet.cpp; sourceTree = "<group>"; };
 		B6963D401DEEDCCB00EE33CC /* Bullet.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Bullet.hpp; sourceTree = "<group>"; };
 		B6963D411DEEDCCB00EE33CC /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
@@ -91,24 +85,10 @@
 			isa = PBXGroup;
 			children = (
 				B6963D3E1DEEDCCB00EE33CC /* src */,
-				B6963D371DEEDB9E00EE33CC /* img */,
 			);
 			name = "Spaceship Battle Game";
 			path = "Flocking Spaceships";
 			sourceTree = "<group>";
-		};
-		B6963D371DEEDB9E00EE33CC /* img */ = {
-			isa = PBXGroup;
-			children = (
-				B6963D381DEEDB9E00EE33CC /* area.png */,
-				B6963D391DEEDB9E00EE33CC /* bullet.png */,
-				B6963D3A1DEEDB9E00EE33CC /* enemy-entity.png */,
-				B6963D3B1DEEDB9E00EE33CC /* enemy-in-area.png */,
-				B6963D3C1DEEDB9E00EE33CC /* leader-entity.png */,
-				B6963D3D1DEEDB9E00EE33CC /* leader-in-area.png */,
-			);
-			path = img;
-			sourceTree = SOURCE_ROOT;
 		};
 		B6963D3E1DEEDCCB00EE33CC /* src */ = {
 			isa = PBXGroup;

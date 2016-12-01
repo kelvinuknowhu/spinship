@@ -14,7 +14,6 @@ LTexture::LTexture(int nframes)
     this->entityTexture = NULL;
     this->entityTextureWidth = 0;
     this->entityTextureHeight = 0;
-    this->renderer = NULL;
     this->nframes = nframes;
     this->angle = 0;
 }
@@ -24,12 +23,8 @@ LTexture::~LTexture()
     free();
 }
 
-void LTexture::setRenderer(SDL_Renderer* renderer)
-{
-    this->renderer = renderer;
-}
 
-bool LTexture::loadFromFile(std::string pathEntity)
+bool LTexture::loadFromFile(std::string pathEntity, SDL_Renderer* renderer)
 {
     SDL_Texture* newTextureEntity = NULL;
 
@@ -61,7 +56,8 @@ bool LTexture::loadFromFile(std::string pathEntity)
 
 void LTexture::free()
 {
-    if (entityTexture != NULL) {
+    if (entityTexture != NULL)
+    {
         SDL_DestroyTexture(entityTexture);
         entityTexture = NULL;
     }
@@ -88,7 +84,7 @@ void LTexture::setAlpha(Uint8 alpha)
     SDL_SetTextureAlphaMod(entityTexture, alpha);
 }
 
-void LTexture::render(int x, int y, SDL_Rect* clip, SDL_Point* center, SDL_RendererFlip flip)
+void LTexture::render(int x, int y, SDL_Rect* clip, SDL_Renderer* renderer, SDL_Point* center, SDL_RendererFlip flip)
 {
     // Set rendering space, by default pass in texture width and height
     SDL_Rect entityRenderQuad = {x, y, this->entityTextureWidth, this->entityTextureHeight};
@@ -104,7 +100,6 @@ void LTexture::render(int x, int y, SDL_Rect* clip, SDL_Point* center, SDL_Rende
 
     // SDL_RenderCopy(renderer, texture, clip, &renderQuad);
     SDL_RenderCopyEx(renderer, entityTexture, clip, &entityRenderQuad, this->angle, center, flip);
-
 }
 
 

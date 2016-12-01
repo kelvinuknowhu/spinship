@@ -35,11 +35,11 @@ SDL_Renderer* renderer = NULL;
 const Uint8* KEYS = SDL_GetKeyboardState(NULL);
 
 const string BASE_DIRECTORY = "/Users/Kelvin/Desktop/Game_Programming/SpaceshipBattleGame/";
-const string LEADER_PATH = BASE_DIRECTORY + "img/leader-in-area.png";
-const string ENEMY_PATH = BASE_DIRECTORY + "img/enemy-in-area.png";
-const string LEADER_ENTITY_PATH = BASE_DIRECTORY + "img/enemy-entity.png";
-const string ENEMY_ENTITY_PATH = BASE_DIRECTORY + "img/enemy-entity.png";
-const string BULLET_PATH  = BASE_DIRECTORY + "img/bullet.png";
+const string LEADER_PATH = BASE_DIRECTORY + "img/minimalistic-plane/leader-in-area.png";
+const string ENEMY_PATH = BASE_DIRECTORY + "img/minimalistic-plane/enemy-in-area.png";
+const string LEADER_ENTITY_PATH = BASE_DIRECTORY + "img/minimalistic-plane/leader-entity.png";
+const string ENEMY_ENTITY_PATH = BASE_DIRECTORY + "img/minimalistic-plane/enemy-entity.png";
+const string BULLET_PATH  = BASE_DIRECTORY + "img/minimalistic-plane/bullet.png";
 
 
 const int LEADER_ANIMATION_FRAMES = 1;
@@ -68,7 +68,7 @@ vector<Bullet*> bullets;
 bool init();
 bool loadMedia();
 void enable2D(int width, int height);
-void draw_rect(float x, float y, float width, float height);
+void draw_rect(int x, int y, int width, int height);
 
 
 int main(int argc, const char * argv[]) {
@@ -134,26 +134,21 @@ int main(int argc, const char * argv[]) {
                     SDL_RenderClear(renderer);
                     
                     // Draw the first player
-                    leader1->render(leader1->position.x, leader1->position.y, NULL);
+                    leader1->render(leader1->position.x, leader1->position.y, NULL, renderer);
                     leader1->updateCenter();
-                    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 75);
-                    SDL_Rect rect1 = { (int)leader1->center.x, (int)leader1->center.y, 5, 5 };
-                    SDL_RenderFillRect(renderer, &rect1);
+//                    draw_rect((int)leader1->center.x, (int)leader1->center.y, 5, 5);
+                    
                     
                     // Draw the second player
-                    leader2->render(leader2->position.x, leader2->position.y, NULL);
-                    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 75);
-                    SDL_Rect rect2 = { (int)leader2->center.x, (int)leader2->center.y, 5, 5 };
-                    SDL_RenderFillRect(renderer, &rect2);
+                    leader2->render(leader2->position.x, leader2->position.y, NULL, renderer);
                     leader2->updateCenter();
-
-                    
+//                    draw_rect((int)leader2->center.x, (int)leader2->center.y, 5, 5);
 
                     
                     // Update position for each entity
                     for (Entity* e : leader1Entities) {
                         e->updateCenter();
-                        e->render(e->position.x, e->position.y, NULL);
+                        e->render(e->position.x, e->position.y, NULL, renderer);
                         e->setAngle(leader1->angle);
                         e->updateTargetPosition(leader1);
                         e->updatePosition(leader1);
@@ -161,7 +156,7 @@ int main(int argc, const char * argv[]) {
                     
                     for (Entity* e : leader2Entities) {
                         e->updateCenter();
-                        e->render(e->position.x, e->position.y, NULL);
+                        e->render(e->position.x, e->position.y, NULL, renderer);
                         e->setAngle(leader2->angle);
                         e->updateTargetPosition(leader2);
                         e->updatePosition(leader2);
@@ -193,8 +188,7 @@ int main(int argc, const char * argv[]) {
                         
                         Vector2 position = leader1->center;
                         Bullet* tempBullet = new Bullet(position, leader1->angle, BULLET_ANIMATION_FRAMES);
-                        tempBullet->setRenderer(renderer);
-                        tempBullet->loadFromFile(BULLET_PATH);
+                        tempBullet->loadFromFile(BULLET_PATH, renderer);
                         bullets.push_back(tempBullet);
                         --NUM_BULLETS_LIMIT;
                     }
@@ -211,7 +205,7 @@ int main(int argc, const char * argv[]) {
                         }
                         else {
                             SDL_Rect* currentClip = &bulletClips[b->currentFrame];
-                            b->render(b->position.x, b->position.y, currentClip);
+                            b->render(b->position.x, b->position.y, currentClip, renderer);
                             b->updatePosition();
                             ++it;
                         }
@@ -291,21 +285,8 @@ bool init()
             SDL_GL_MakeCurrent(window, context);
             
             renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);    // Create vsynced renderer for window
-            if (renderer != NULL) {
-                leader1->setRenderer(renderer);
-                leader2->setRenderer(renderer);
-
-                for (Entity* e : leader1Entities) {
-                    e->setRenderer(renderer);
-                }
-                for (Entity* e : leader2Entities) {
-                    e->setRenderer(renderer);
-                }
-                
-                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);   //Initialize renderer color
-                
-            } else {
-                printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
+            if (renderer == NULL) {
+                printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError());
                 success = false;
             }
         } else {
@@ -326,22 +307,22 @@ bool loadMedia()
     
     
     bool IMGloaded = true;
-    if (!leader1->loadFromFile(LEADER_PATH)) {
+    if (!leader1->loadFromFile(LEADER_PATH, renderer)) {
         IMGloaded = false;
     }
     
-    if (!leader2->loadFromFile(ENEMY_PATH)) {
+    if (!leader2->loadFromFile(ENEMY_PATH, renderer)) {
         IMGloaded = false;
     }
     
     for (Entity* e : leader1Entities) {
-        if (!e->loadFromFile(LEADER_ENTITY_PATH)) {
+        if (!e->loadFromFile(LEADER_ENTITY_PATH, renderer)) {
             IMGloaded = false;
         }
     }
     
     for (Entity* e : leader2Entities) {
-        if (!e->loadFromFile(ENEMY_ENTITY_PATH)) {
+        if (!e->loadFromFile(ENEMY_ENTITY_PATH, renderer)) {
             IMGloaded = false;
         }
     }
@@ -431,13 +412,10 @@ void enable2D(int width, int height) {
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
-void draw_rect(float x, float y, float width, float height)
+void draw_rect(int x, int y, int width, int height)
 {
-    glBegin(GL_QUADS);
-    glVertex2f(x, y);
-    glVertex2f(x + width, y);
-    glVertex2f(x + width, y + height);
-    glVertex2f(x, y + height);
-    glEnd();
+    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 75);
+    SDL_Rect rect = {  x, y, width, height };
+    SDL_RenderFillRect(renderer, &rect);
 }
 

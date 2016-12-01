@@ -23,20 +23,16 @@ public:
     float angle;
     
     LTexture(int nframes);
-    
     ~LTexture();
     
-    bool loadFromFile(std::string pathEntity);
-    
+    bool loadFromFile(std::string pathEntity, SDL_Renderer* renderer);
     
     void free();
     void setColor(Uint8 red, Uint8 green, Uint8 blue);
-    
-    void setRenderer(SDL_Renderer* renderer);
     void setBlendMode(SDL_BlendMode blending);
     void setAlpha(Uint8 alpha);
     
-    void render(int x, int y, SDL_Rect* clip, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+    void render(int x, int y, SDL_Rect* clip, SDL_Renderer* renderer, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
     int getTextureWidth()
     {
@@ -58,7 +54,6 @@ public:
     }
 private:
     SDL_Texture* entityTexture;
-    SDL_Renderer* renderer;
     int entityTextureWidth;
     int entityTextureHeight;
     int nframes;
