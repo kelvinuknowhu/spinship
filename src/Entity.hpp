@@ -22,29 +22,24 @@
 class Entity : public LTexture
 {
 public:
-    float speed;
-    float rotation;
-    float detectionDistance;
-    float detectionDistanceSquared;
+    float speed = 0;
+    float rotation = 0;
+    float counter = 0;
+    float threshold = 0;
     Vector2 velocity = Vector2(0, 0);
-    Vector2 position;
-    Vector2 center;
+    Vector2 position = Vector2(0, 0);
+    Vector2 center = Vector2(0, 0);
     Vector2 acceleration = Vector2(0, 0);
     Vector2 targetPosition = Vector2(0, 0);
- 
-
     
     SDL_Rect boundingRectangle;
 
-    Entity(Vector2 position, float rotation,
-           int screenWidth, int screenHeight) : LTexture(1)
+    Entity(Vector2 position, int screenWidth, int screenHeight) : LTexture(1)
     {
         this->position = position;
-        this->detectionDistanceSquared = detectionDistance * detectionDistance;
         this->boundingRectangle = { 0, 0, screenWidth, screenHeight };
         this->center.x = position.x + getActualWidth()/2;
         this->center.y = position.y + getActualHeight()/2;
-        this->rotation = rotation;
     }
 
     
@@ -60,8 +55,8 @@ public:
     
     void updateCenter()
     {
-        this->center.x = position.x + getActualWidth() / 2;
-        this->center.y = position.y + getActualHeight() / 2;
+        this->center.x = position.x + getActualWidth()/2;
+        this->center.y = position.y + getActualHeight()/2;
     }
     
     void updateTargetPosition(Leader* leader)
@@ -78,6 +73,13 @@ public:
         }
     }
     
+    void updateCounter(float ticks)
+    {
+        counter += ticks;
+        std::cout << counter << std::endl;
+    }
+    
+    
     void setAngle(float angle)
     {
         this->angle = angle;
@@ -89,14 +91,24 @@ public:
         speed = _speed;
     }
     
-    void setDetectionDistance(float _distance)
+    void setThreshold(float _time)
     {
-        detectionDistance = _distance;
+        threshold = _time;
     }
+    
+    bool checkIfCounterDone()
+    {
+        if (counter > threshold)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+    
 };
-
-
-
-
 
 #endif /* Entity2_hpp */

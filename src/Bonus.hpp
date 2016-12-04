@@ -35,14 +35,13 @@ public:
         angle += 5;
     }
     
-    bool detectCollision(float _xPos, float _yPos, float _width, float _height)  {
+    bool detectCollision(float _xPos, float _yPos, float _width, float _height)
+    {
         float upperBound = _yPos;
         float lowerBound = _yPos + _height;
         float leftBound  = _xPos;
         float rightBound = _xPos + _width;
 
-//        std::cout << position.x << "; "<< position.x + getActualWidth()  << "; " << position.y << "; "<< position.y + getActualHeight() << std::endl;
-//        std::cout << rightBound << "; "<< leftBound  << "; " << lowerBound << "; "<< upperBound << std::endl;
         if (position.x + getActualWidth() > leftBound
             && position.x  < rightBound
             && position.y < lowerBound

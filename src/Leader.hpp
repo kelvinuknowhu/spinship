@@ -20,7 +20,8 @@
 #define PI 3.14159265
 
 
-class Leader : public LTexture {
+class Leader : public LTexture
+{
 public:
     float speed = 0;
     float initialSpeed = 0;
@@ -37,9 +38,13 @@ public:
     int numEntities = 0;
     int maxNumEntities = 0;
     float health = 100;
+    int maxNumBulletsPerPress = 0;
+    int numBulletsPerPress = 0;
+    std::string planeType;
+    std::string bulletType;
+    std::string bulletLevel;
     Vector2 position;
     SDL_Rect boundingRectangle;
-
     
     Leader(Vector2 position,
            int screenWidth, int screenHeight) : LTexture(1)
@@ -48,9 +53,30 @@ public:
         this->boundingRectangle = { 0, 0, screenWidth, screenHeight };
     }
     
-    float calculateEntityRotation()
+    bool detectCollision(float _xPos, float _yPos, float _width, float _height)
     {
-        return numEntities * (360 / maxNumEntities);
+        float upperBound = _yPos;
+        float lowerBound = _yPos + _height;
+        float leftBound  = _xPos;
+        float rightBound = _xPos + _width;
+        
+        if (position.x + getActualWidth() > leftBound
+            && position.x  < rightBound
+            && position.y < lowerBound
+            && position.y + getActualHeight() > upperBound)
+            return true;
+        return false;
+    }
+    
+    void speedDown(float ticks)
+    {
+        speed -= friction * ticks;
+        
+        if (speed < 0)
+        {
+            speed = 0;
+        }
+        
     }
 
 
@@ -139,17 +165,6 @@ public:
             avgRotation = 360 / numEntities;
     }
     
-    void speedDown(float ticks)
-    {
-        speed -= friction * ticks;
-
-        if (speed < 0)
-        {
-            speed = 0;
-        }
-        
-    }
-    
     
     void setAngle(float _angle)
     {
@@ -192,11 +207,40 @@ public:
         this->health = _health;
     }
     
+    void setPlaneType(std::string _type)
+    {
+        planeType = _type;
+    }
+    
+    void setBulletType(std::string _type)
+    {
+        bulletType = _type;
+    }
+    
+    void setBulletLevel(std::string _level)
+    {
+        bulletLevel = _level;
+    }
+    
+    void setMaxNumBulletsPerPress(int _num)
+    {
+        maxNumBulletsPerPress = _num;
+        numBulletsPerPress = maxNumBulletsPerPress;
+    }
+    
     void loseHealth(std::string _type)
     {
-        if (_type == "laserBlue01")
+        if (_type == "laserBlue_1" || _type == "laserGreen_1" || _type == "laserRed_1")
         {
             health -= 1;
+        }
+        else if (_type == "laserBlue_2" || _type == "laserGreen_2" || _type == "laserRed_2")
+        {
+            health -= 2;
+        }
+        else if (_type == "laserBlue_3" || _type == "laserGreen_3" || _type == "laserRed_3")
+        {
+            health -= 3;
         }
     }
     
