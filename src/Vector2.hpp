@@ -19,37 +19,37 @@ public:
     float x;
     float y;
     
-    //CONSTRUCTORS
+    // CONSTRUCTORS
     Vector2() : x(0), y(0) {}
     Vector2(float xValue, float yValue) : x(xValue), y(yValue) {}
     
 
-    //ASSINGMENT AND EQUALITY OPERATIONS
+    // ASSINGMENT AND EQUALITY OPERATIONS
     inline Vector2& operator = (const Vector2& v) { x = v.x; y = v.y; return *this; }
     inline Vector2& operator = (const float& f) { x = f; y = f; return *this; }
     inline Vector2& operator - (void) { x = -x; y = -y; return *this; }
     inline bool operator == (const Vector2& v) const { return (x == v.x) && (y == v.y); }
     inline bool operator != (const Vector2& v) const { return (x != v.x) || (y != v.y); }
 
-    //VECTOR2 TO VECTOR2 OPERATIONS
+    // VECTOR2 TO VECTOR2 OPERATIONS
     inline const Vector2 operator + (const Vector2& v) const { return Vector2(x + v.x, y + v.y); }
     inline const Vector2 operator - (const Vector2& v) const { return Vector2(x - v.x, y - v.y); }
     inline const Vector2 operator * (const Vector2& v) const { return Vector2(x * v.x, y * v.y); }
     inline const Vector2 operator / (const Vector2& v) const { return Vector2(x / v.x, y / v.y); }
 
-    //VECTOR2 TO THIS OPERATIONS
+    // VECTOR2 TO THIS OPERATIONS
     inline Vector2& operator += (const Vector2& v) { x += v.x; y += v.y; return *this; }
     inline Vector2& operator -= (const Vector2& v) { x -= v.x; y -= v.y; return *this; }
     inline Vector2& operator *= (const Vector2& v) { x *= v.x; y *= v.y; return *this; }
     inline Vector2& operator /= (const Vector2& v) { x /= v.x; y /= v.y; return *this; }
 
-    //SCALAR TO VECTOR2 OPERATIONS
+    // SCALAR TO VECTOR2 OPERATIONS
     inline const Vector2 operator + (float v) const { return Vector2(x + v, y + v); }
     inline const Vector2 operator - (float v) const { return Vector2(x - v, y - v); }
     inline const Vector2 operator * (float v) const { return Vector2(x * v, y * v); }
     inline const Vector2 operator / (float v) const { return Vector2(x / v, y / v); }
 
-    //SCALAR TO THIS OPERATIONS
+    // SCALAR TO THIS OPERATIONS
     inline Vector2& operator += (float v) { x += v; y += v; return *this; }
     inline Vector2& operator -= (float v) { x -= v; y -= v; return *this; }
     inline Vector2& operator *= (float v) { x *= v; y *= v; return *this; }
@@ -80,14 +80,16 @@ public:
         return *this;
     }
     
-    void Limit(float maxSpeed) {
+    void Limit(float maxSpeed)
+    {
         if (x > maxSpeed)
             x = maxSpeed;
         if (y > maxSpeed)
             y = maxSpeed;
     }
     
-    static Vector2 Max(Vector2& vec1, Vector2& vec2) {
+    static Vector2 Max(Vector2& vec1, Vector2& vec2)
+    {
         Vector2 vec_temp;
         vec_temp.x = std::min(vec1.x, vec2.y);
         vec_temp.y = std::min(vec1.y, vec2.y);

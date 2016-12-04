@@ -17,16 +17,15 @@
 #include "Vector2.hpp"
 #include "Leader.hpp"
 #include "LTexture.hpp"
+#include "Utility.h"
 
-class Entity : public LTexture {
+class Entity : public LTexture
+{
 public:
     float speed;
-    float maxSpeed;
     float rotation;
     float detectionDistance;
     float detectionDistanceSquared;
-    float separationDistance;
-    float separationDistanceSquared;
     Vector2 velocity = Vector2(0, 0);
     Vector2 position;
     Vector2 center;
@@ -37,36 +36,20 @@ public:
     
     SDL_Rect boundingRectangle;
 
-    Entity(Vector2 position, float speed, float maxSpeed,
-           int nframes, float rotation,
-           int screenWidth, int screenHeight) : LTexture(nframes)
+    Entity(Vector2 position, float rotation,
+           int screenWidth, int screenHeight) : LTexture(1)
     {
         this->position = position;
-        this->speed = speed;
-        this->maxSpeed = maxSpeed;
-        this->detectionDistance = 300.0f;
         this->detectionDistanceSquared = detectionDistance * detectionDistance;
         this->boundingRectangle = { 0, 0, screenWidth, screenHeight };
-        this->center.x = position.x + getTextureWidth()/2;
-        this->center.y = position.y + getTextureHeight()/2;
+        this->center.x = position.x + getActualWidth()/2;
+        this->center.y = position.y + getActualHeight()/2;
         this->rotation = rotation;
     }
 
     
-
-    
-    void setAngle(float angle) {
-        this->angle = angle;
-    }
-    
-     
-        
-        
-    
-    
     void updatePosition(Leader* leader)
     {
-        
         float scale = 3.0;
         velocity = targetPosition - center;
         velocity.Normalize();
@@ -77,60 +60,39 @@ public:
     
     void updateCenter()
     {
-        this->center.x = position.x + getTextureWidth() / 2;
-        this->center.y = position.y + getTextureHeight() / 2;
+        this->center.x = position.x + getActualWidth() / 2;
+        this->center.y = position.y + getActualHeight() / 2;
     }
     
-    void updateTargetPosition(Leader* leader) {
-        float distance = getTextureWidth() + getTextureHeight();
+    void updateTargetPosition(Leader* leader)
+    {
+        float distance = 1.5 * (getActualWidth() + getActualHeight());
         float entityRadian = angleToRadian(rotation);
         Vector2 new_position = leader->center + Vector2(distance * cos(entityRadian), distance * sin(entityRadian));
         targetPosition = new_position;
-        rotation += 1.0f;
         
+        rotation += 1;
         if (rotation >= 360)
         {
-            rotation = 0.0f;
+            rotation = 0;
         }
     }
     
-//    Vector2 separateEntites(std::vector<Entity*>& entities) {
-//        int count = 0;
-//        Vector2 steer = Vector2(0, 0);
-//        
-//        for (int i = 0; i < entities.size(); i++) {
-//            if (this != entities[i]) {
-//                Vector2 hv = this->position - entities[i]->position;
-//                float scale = hv.Length() / this->separationDistance;
-//                hv.Normalize();
-//                hv /= scale;
-//                steer += hv;
-//            }
-//        }
-//        
-//        if (count > 0) {
-//            steer /= count;
-//        }
-//        
-//        if (steer.LengthSquared() > 0) {
-//            steer.Normalize();
-//            steer *= maxSpeed;
-//        }
-//        
-//        return steer;
-//        
-//    }
-    
-//    void applyForce(Vector2& force)
-//    {
-//        this->acceleration += force;
-//    }
-    
-    float angleToRadian(float angle)
+    void setAngle(float angle)
     {
-        return (float) angle * PI / 180.0f;
+        this->angle = angle;
     }
-
+    
+    
+    void setSpeed(float _speed)
+    {
+        speed = _speed;
+    }
+    
+    void setDetectionDistance(float _distance)
+    {
+        detectionDistance = _distance;
+    }
 };
 
 

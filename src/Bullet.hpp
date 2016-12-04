@@ -12,48 +12,51 @@
 #include <stdio.h>
 #include "Leader.hpp"
 #include "Vector2.hpp"
+#include "Utility.h"
 
-class Bullet : public LTexture {
+class Bullet : public LTexture
+{
     
 public:
     Vector2 position;
     Vector2 velocity;
     Vector2 acceleration;
-    float maxSpeed;
+    Vector2 maxSpeed;
     float velocityAngle;
     int numBulletsMax;
     
     
-    Bullet(Vector2 _pos, float _angle) : LTexture(1) {
+    Bullet(Vector2 _pos, float _angle) : LTexture(1)
+    {
         this->position = _pos;
-        this->angle = _angle;
-        this->velocityAngle = _angle - 90;
-        this->velocity.x = cos(angleToRadian(velocityAngle));
-        this->velocity.y = sin(angleToRadian(velocityAngle));
-        this->acceleration = Vector2(velocity.x, velocity.y);
-        this->maxSpeed = 10;
+        this->angle = _angle + 90;
+        this->velocityAngle = _angle;
+        this->velocity.x = 250 * cos(angleToRadian(velocityAngle));
+        this->velocity.y = 250 * sin(angleToRadian(velocityAngle));
+        this->acceleration = velocity;
+        this->maxSpeed = Vector2(1500, 1500);
         this->numBulletsMax = 1;
     }
     
     void setPosition(Vector2 _pos)
     {
         this->position.x = position.x;
-        this->position.y = position.y - getTextureHeight()/2;
+        this->position.y = position.y - getActualHeight()/2;
     }
     
-    void updatePosition()
+    void updatePosition(float ticks)
     {
-        velocity += acceleration;
-        position += velocity;
-        if (velocity.x > maxSpeed || velocity.y > maxSpeed) {
-            acceleration.x = 0;
-            acceleration.y = 0;
+        position += velocity * ticks;
+        velocity += acceleration * ticks;
+        if (velocity.x > maxSpeed.x || velocity.y > maxSpeed.y)
+        {
+            acceleration = 0;
         }
     }
     
     bool offScreen(int screenWidth, int screenHeight)
     {
-        if (position.x < 0 || position.x > screenWidth || position.y < 0 || position.y > screenHeight)
+        if (position.x + getActualWidth() < 0 || position.x > screenWidth || position.y + getActualHeight() < 0 || position.y > screenHeight)
             return true;
         return false;
     }
@@ -66,11 +69,6 @@ public:
     void setVelocityAngle(float angle)
     {
         this->velocityAngle = angle - 90;
-    }
-    
-    float angleToRadian(float angle)
-    {
-        return (float) angle * PI / 180.0f;
     }
     
     

@@ -26,7 +26,6 @@ private:
     int actualWidth;
     int actualHeight;
     int nframes;
-   
     
 public:
     float angle;
@@ -35,11 +34,10 @@ public:
     ~LTexture();
     void free();
     bool loadFromFile(std::string pathEntity, SDL_Renderer* renderer);
-    
+    void render(int x, int y, SDL_Rect* clip, SDL_Renderer* renderer, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
     void setColor(Uint8 red, Uint8 green, Uint8 blue);
     void setBlendMode(SDL_BlendMode blending);
     void setAlpha(Uint8 alpha);
-    void render(int x, int y, SDL_Rect* clip, SDL_Renderer* renderer, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
     int getTextureWidth()
     {

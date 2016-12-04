@@ -32,20 +32,28 @@ bool LTexture::loadFromFile(std::string pathEntity, SDL_Renderer* renderer)
     
     // Load image at specified path
     SDL_Surface* loadedSurface = IMG_Load(pathEntity.c_str());
-    if (loadedSurface == NULL) {
+    if (loadedSurface == NULL)
+    {
         printf("Unable to load image %s! SDL_image Error: %s\n", pathEntity.c_str(), IMG_GetError());
-    } else {
+    }
+    else
+    {
         // Color key image
         SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0xFF, 0xFF, 0xFF));
         
         // Create texture from surface pixels
         newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
-        if (newTexture == NULL) {
+        if (newTexture == NULL)
+        {
             printf("Unable to create texture from %s! SDL_image Error: %s\n", pathEntity.c_str(), IMG_GetError());
-        } else {
+        }
+        else
+        {
             // Get image dimensions
             this->textureWidth  = loadedSurface->w;
             this->textureHeight = loadedSurface->h;
+            this->actualWidth = textureWidth;
+            this->actualHeight = textureHeight;
         }
         // Get rid of loaded surface
         SDL_FreeSurface(loadedSurface);
@@ -87,19 +95,16 @@ void LTexture::setAlpha(Uint8 alpha)
 
 void LTexture::render(int x, int y, SDL_Rect* clip, SDL_Renderer* renderer, SDL_Point* center, SDL_RendererFlip flip)
 {
-    
-    if (actualWidth == 0 || actualHeight == 0)
-    {
-        actualWidth = textureWidth;
-        actualHeight = textureHeight;
-    }
+    assert(actualWidth  > 0);
+    assert(actualHeight > 0);
     
     // Set rendering space, by default pass in texture width and height
     SDL_Rect renderQuad = { x, y, this->actualWidth, this->actualHeight };
 
     
     // Set clip dimensions of rendering if there is a clip
-    if (clip != NULL) {
+    if (clip != NULL)
+    {
         renderQuad.w = clip->w;
         renderQuad.h = clip->h;
     }

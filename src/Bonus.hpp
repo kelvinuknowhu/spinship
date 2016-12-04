@@ -19,6 +19,10 @@ class Bonus : public LTexture
     
 public:
     Vector2 position;
+    float counter = 0;
+    float threshold = 0;
+
+
     
     Bonus(float x, float y) : LTexture(1)
     {
@@ -28,25 +32,30 @@ public:
     
     void updateAngle()
     {
-        angle += 1;
+        angle += 5;
     }
     
-    bool detectCollision(int _xPos, int _yPos, int _width, int _height)  {
-        int lowerBound = _yPos;
-        int upperBound = _yPos + _height;
-        int leftBound  = _xPos;
-        int rightBound = _xPos + _width;
-        
-        if (position.x + getTextureWidth() > leftBound
+    bool detectCollision(float _xPos, float _yPos, float _width, float _height)  {
+        float upperBound = _yPos;
+        float lowerBound = _yPos + _height;
+        float leftBound  = _xPos;
+        float rightBound = _xPos + _width;
+
+//        std::cout << position.x << "; "<< position.x + getActualWidth()  << "; " << position.y << "; "<< position.y + getActualHeight() << std::endl;
+//        std::cout << rightBound << "; "<< leftBound  << "; " << lowerBound << "; "<< upperBound << std::endl;
+        if (position.x + getActualWidth() > leftBound
             && position.x  < rightBound
-            && position.y < upperBound
-            && position.y + getTextureHeight() > lowerBound)
+            && position.y < lowerBound
+            && position.y + getActualHeight() > upperBound)
             return true;
         return false;
     }
+   
     
     
 };
 
-
 #endif /* Bonus_hpp */
+
+
+
