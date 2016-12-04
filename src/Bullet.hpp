@@ -18,15 +18,16 @@ class Bullet : public LTexture
 {
     
 public:
-    Vector2 position;
-    Vector2 velocity;
-    Vector2 acceleration;
-    Vector2 maxSpeed;
-    float velocityAngle;
-    int numBulletsMax;
+    std::string bulletName;
+    Vector2 position = Vector2(0,0);
+    Vector2 velocity = Vector2(0,0);
+    Vector2 acceleration = Vector2(0,0);
+    Vector2 maxSpeed= Vector2(0,0);
+    float velocityAngle = 0;
     
     
-    Bullet(Vector2 _pos, float _angle) : LTexture(1)
+    
+    Bullet(Vector2 _pos, float _angle, std::string _name) : LTexture(1)
     {
         this->position = _pos;
         this->angle = _angle + 90;
@@ -35,7 +36,7 @@ public:
         this->velocity.y = 250 * sin(angleToRadian(velocityAngle));
         this->acceleration = velocity;
         this->maxSpeed = Vector2(1500, 1500);
-        this->numBulletsMax = 1;
+        this->bulletName = _name;
     }
     
     void setPosition(Vector2 _pos)

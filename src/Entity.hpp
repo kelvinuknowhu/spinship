@@ -26,24 +26,24 @@ public:
     float rotation = 0;
     float counter = 0;
     float threshold = 0;
+    float bulletCounter = 0;
+    float bulletThreshold = 0;
     Vector2 velocity = Vector2(0, 0);
     Vector2 position = Vector2(0, 0);
     Vector2 center = Vector2(0, 0);
     Vector2 acceleration = Vector2(0, 0);
     Vector2 targetPosition = Vector2(0, 0);
-    
-    SDL_Rect boundingRectangle;
+    std::string bulletType;
 
-    Entity(Vector2 position, int screenWidth, int screenHeight) : LTexture(1)
+    Entity(Vector2 position) : LTexture(1)
     {
         this->position = position;
-        this->boundingRectangle = { 0, 0, screenWidth, screenHeight };
         this->center.x = position.x + getActualWidth()/2;
         this->center.y = position.y + getActualHeight()/2;
     }
 
     
-    void updatePosition(Leader* leader)
+    void updatePosition()
     {
         float scale = 3.0;
         velocity = targetPosition - center;
@@ -76,9 +76,12 @@ public:
     void updateCounter(float ticks)
     {
         counter += ticks;
-        std::cout << counter << std::endl;
     }
     
+    void updateBulletCounter(float ticks)
+    {
+        bulletCounter += ticks;
+    }
     
     void setAngle(float angle)
     {
@@ -96,16 +99,33 @@ public:
         threshold = _time;
     }
     
-    bool checkIfCounterDone()
+    void setBulletThreshold(float _time)
+    {
+        bulletThreshold = _time;
+    }
+    
+    void setBulletType(std::string _type)
+    {
+        bulletType = _type;
+    }
+    
+    bool checkIfDisappear()
     {
         if (counter > threshold)
+            return true;
+        else
+            return false;
+    }
+    
+    bool checkIfFireBullet()
+    {
+        if (bulletCounter > bulletThreshold)
         {
+            bulletCounter = 0;
             return true;
         }
         else
-        {
             return false;
-        }
     }
     
     

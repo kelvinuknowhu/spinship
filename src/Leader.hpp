@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <vector>
+#include <string>
 #include "Vector2.hpp"
 #include "LTexture.hpp"
 #include "Utility.h"
@@ -33,24 +34,26 @@ public:
     float avgRotation = 0;
     float detectionDistance = 0;
     float detectionDistanceSquared = 0;
+    float ammunitionCounter = 0;
+    float ammunitionThreshold = 0;
     Vector2 velocity = Vector2(0, 0);
     Vector2 center = Vector2(0, 0);
     int numEntities = 0;
     int maxNumEntities = 0;
-    float health = 100;
+    float health = 0;
+    float fullHealth = 0;
     int maxNumBulletsPerPress = 0;
     int numBulletsPerPress = 0;
     std::string planeType;
     std::string bulletType;
-    std::string bulletLevel;
+    int bulletLevel = 1;
     Vector2 position;
     SDL_Rect boundingRectangle;
     
-    Leader(Vector2 position,
-           int screenWidth, int screenHeight) : LTexture(1)
+    Leader(Vector2 _position, int xMin, int xMax, int yMin, int yMax) : LTexture(1)
     {
-        this->position = position;
-        this->boundingRectangle = { 0, 0, screenWidth, screenHeight };
+        this->position = _position;
+        this->boundingRectangle = { xMin, yMin, xMax - xMin, yMax - yMin };
     }
     
     bool detectCollision(float _xPos, float _yPos, float _width, float _height)
@@ -71,12 +74,8 @@ public:
     void speedDown(float ticks)
     {
         speed -= friction * ticks;
-        
         if (speed < 0)
-        {
             speed = 0;
-        }
-        
     }
 
 
@@ -100,7 +99,6 @@ public:
             position.y = boundingRectangle.y;
         
         updateCenter();
-        
     }
     
     void updateSpeed(int dir, float ticks)
@@ -202,9 +200,10 @@ public:
         this->maxNumEntities = _maxNumEntities;
     }
     
-    void setHealth(float _health)
+    void setFullHealth(float _health)
     {
-        this->health = _health;
+        this->fullHealth = _health;
+        this->health = fullHealth;
     }
     
     void setPlaneType(std::string _type)
@@ -217,7 +216,7 @@ public:
         bulletType = _type;
     }
     
-    void setBulletLevel(std::string _level)
+    void setBulletLevel(int _level)
     {
         bulletLevel = _level;
     }
@@ -228,25 +227,55 @@ public:
         numBulletsPerPress = maxNumBulletsPerPress;
     }
     
+    void setAmmunitionCounter(float _time)
+    {
+        ammunitionCounter = _time;
+    }
+    
+    void setAmmunitionThreshold(float _time)
+    {
+        ammunitionThreshold = _time;
+    }
+    
     void loseHealth(std::string _type)
     {
-        if (_type == "laserBlue_1" || _type == "laserGreen_1" || _type == "laserRed_1")
+        std::string to_check = _type.substr(_type.find("_"));
+        if (to_check == "_1")
         {
-            health -= 1;
+            health -= 0.1;
         }
-        else if (_type == "laserBlue_2" || _type == "laserGreen_2" || _type == "laserRed_2")
+        else if (to_check == "_2")
         {
-            health -= 2;
+            health -= 0.2;
         }
-        else if (_type == "laserBlue_3" || _type == "laserGreen_3" || _type == "laserRed_3")
+        else if (to_check == "_3")
         {
-            health -= 3;
+            health -= 0.4;
+        }
+        else if (to_check == "_4")
+        {
+            health -= 0.4;
+            speed -= 1;
+            if (speed <= 0)
+                speed = 0;
+        }
+        else if (_type == "entity_blue" || _type == "entity_green" || _type == "entity_red")
+        {
+            health -= 0.1;
+        }
+        
+        if (health <= 0)
+        {
+            health = 0;
         }
     }
     
     void gainHealth(std::string _type)
     {
-        
+        if (health >= fullHealth)
+        {
+            health = fullHealth;
+        }
     }
     
 

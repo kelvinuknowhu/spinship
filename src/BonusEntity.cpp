@@ -9,14 +9,14 @@
 #include "BonusEntity.hpp"
 #include <string>
 #include <map>
-
 using namespace std;
-float BonusEntity::globalPrevious = 0;
-float BonusEntity::globalCounter = 0;
-float BonusEntity::globalThreshold = 10;
-int BonusEntity::maxNumObjects = 1;
 
-string BonusEntity::colorArray[3] = { "blue", "green", "red" };
+float BonusEntity::globalPrevious  = 0;
+float BonusEntity::globalCounter   = 0;
+float BonusEntity::globalThreshold = 1;
+int   BonusEntity::maxNumObjects   = 1;
+
+string BonusEntity::colorArray[3]     = { "blue", "green", "red" };
 string BonusEntity::bonusFileArray[3] = { "ufo_blue.png", "ufo_green.png", "ufo_red.png" };
 map<string, string> makeEntityFileMap()
 {

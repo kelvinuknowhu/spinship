@@ -18,6 +18,9 @@
 		B6963D4E1DEEDCCB00EE33CC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6963D471DEEDCCB00EE33CC /* main.cpp */; };
 		B6963D4F1DEEDCCB00EE33CC /* Vector2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6963D481DEEDCCB00EE33CC /* Vector2.cpp */; };
 		B69F68B71DF04C470053F066 /* Bonus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B69F68B51DF04C470053F066 /* Bonus.cpp */; };
+		B6B210541DF3F512003B70DC /* HealthBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6B210521DF3F512003B70DC /* HealthBar.cpp */; };
+		B6B210571DF44EE6003B70DC /* BonusBulletEnhance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6B210551DF44EE6003B70DC /* BonusBulletEnhance.cpp */; };
+		B6B2105A1DF45DC1003B70DC /* BonusBulletAmmunition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6B210581DF45DC1003B70DC /* BonusBulletAmmunition.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -53,6 +56,12 @@
 		B6963D491DEEDCCB00EE33CC /* Vector2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Vector2.hpp; sourceTree = "<group>"; };
 		B69F68B51DF04C470053F066 /* Bonus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bonus.cpp; sourceTree = "<group>"; };
 		B69F68B61DF04C470053F066 /* Bonus.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Bonus.hpp; sourceTree = "<group>"; };
+		B6B210521DF3F512003B70DC /* HealthBar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HealthBar.cpp; sourceTree = "<group>"; };
+		B6B210531DF3F512003B70DC /* HealthBar.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HealthBar.hpp; sourceTree = "<group>"; };
+		B6B210551DF44EE6003B70DC /* BonusBulletEnhance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BonusBulletEnhance.cpp; sourceTree = "<group>"; };
+		B6B210561DF44EE6003B70DC /* BonusBulletEnhance.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BonusBulletEnhance.hpp; sourceTree = "<group>"; };
+		B6B210581DF45DC1003B70DC /* BonusBulletAmmunition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BonusBulletAmmunition.cpp; sourceTree = "<group>"; };
+		B6B210591DF45DC1003B70DC /* BonusBulletAmmunition.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BonusBulletAmmunition.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,21 +110,27 @@
 			isa = PBXGroup;
 			children = (
 				B68FC8311DF1A6A700598052 /* Utility.h */,
+				B6963D451DEEDCCB00EE33CC /* LTexture.cpp */,
+				B6963D461DEEDCCB00EE33CC /* LTexture.hpp */,
 				B6963D3F1DEEDCCB00EE33CC /* Bullet.cpp */,
 				B6963D401DEEDCCB00EE33CC /* Bullet.hpp */,
 				B6963D411DEEDCCB00EE33CC /* Entity.cpp */,
 				B6963D421DEEDCCB00EE33CC /* Entity.hpp */,
 				B6963D431DEEDCCB00EE33CC /* Leader.cpp */,
 				B6963D441DEEDCCB00EE33CC /* Leader.hpp */,
-				B6963D451DEEDCCB00EE33CC /* LTexture.cpp */,
-				B6963D461DEEDCCB00EE33CC /* LTexture.hpp */,
-				B6963D471DEEDCCB00EE33CC /* main.cpp */,
+				B6B210521DF3F512003B70DC /* HealthBar.cpp */,
+				B6B210531DF3F512003B70DC /* HealthBar.hpp */,
 				B6963D481DEEDCCB00EE33CC /* Vector2.cpp */,
 				B6963D491DEEDCCB00EE33CC /* Vector2.hpp */,
 				B69F68B51DF04C470053F066 /* Bonus.cpp */,
 				B69F68B61DF04C470053F066 /* Bonus.hpp */,
 				B68FC8351DF2A0E500598052 /* BonusEntity.cpp */,
 				B68FC8361DF2A0E500598052 /* BonusEntity.hpp */,
+				B6B210551DF44EE6003B70DC /* BonusBulletEnhance.cpp */,
+				B6B210561DF44EE6003B70DC /* BonusBulletEnhance.hpp */,
+				B6B210581DF45DC1003B70DC /* BonusBulletAmmunition.cpp */,
+				B6B210591DF45DC1003B70DC /* BonusBulletAmmunition.hpp */,
+				B6963D471DEEDCCB00EE33CC /* main.cpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -177,13 +192,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6963D4C1DEEDCCB00EE33CC /* Leader.cpp in Sources */,
+				B6B210541DF3F512003B70DC /* HealthBar.cpp in Sources */,
 				B6963D4F1DEEDCCB00EE33CC /* Vector2.cpp in Sources */,
 				B69F68B71DF04C470053F066 /* Bonus.cpp in Sources */,
 				B6963D4B1DEEDCCB00EE33CC /* Entity.cpp in Sources */,
 				B68FC8371DF2A0E500598052 /* BonusEntity.cpp in Sources */,
 				B6963D4D1DEEDCCB00EE33CC /* LTexture.cpp in Sources */,
 				B6963D4E1DEEDCCB00EE33CC /* main.cpp in Sources */,
+				B6B210571DF44EE6003B70DC /* BonusBulletEnhance.cpp in Sources */,
 				B6963D4A1DEEDCCB00EE33CC /* Bullet.cpp in Sources */,
+				B6B2105A1DF45DC1003B70DC /* BonusBulletAmmunition.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

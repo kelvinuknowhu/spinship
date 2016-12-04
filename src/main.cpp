@@ -20,15 +20,20 @@
 #include <SDL2_image/SDL_image.h>
 #include <string>
 #include "Leader.hpp"
+#include "HealthBar.hpp"
 #include "Entity.hpp"
 #include "Bullet.hpp"
 #include "BonusEntity.hpp"
+#include "BonusBulletEnhance.hpp"
+#include "BonusBulletAmmunition.hpp"
 
 
-#define WINDOW_WIDTH 1200
-#define WINDOW_HEIGHT 700
+
+#define WINDOW_WIDTH 1440
+#define WINDOW_HEIGHT 900
 int ACTUAL_WINDOW_WIDTH = 0;
 int ACTUAL_WINDOW_HEIGHT = 0;
+const int HEALTH_BAR_HEIGHT = 20;
 
 using namespace std;
 
@@ -37,24 +42,32 @@ SDL_Renderer* renderer = NULL;
 
 const Uint8* KEYS = SDL_GetKeyboardState(NULL);
 
-const string BASE_DIRECTORY = "/Users/Kelvin/Desktop/Game_Programming/SpaceshipBattleGame/";
-const string LEADER_DIR = BASE_DIRECTORY + "img/battle-plane/";
-const string ENTITY_DIR = BASE_DIRECTORY + "img/entity-plane/";
-const string BULLET_DIR  = BASE_DIRECTORY + "img/laser-bullet/";
-const string BONUS_ENTITY_DIR = BASE_DIRECTORY + "img/entity-plane/";
-const string BACKGROUND_PATH = BASE_DIRECTORY + "img/background/purple.png";
+const string BASE_DIR = "/Users/Kelvin/Desktop/Game_Programming/SpaceshipBattleGame/";
+const string LEADER_DIR = BASE_DIR + "img/battle-plane/";
+const string ENTITY_DIR = BASE_DIR + "img/entity-plane/";
+const string BULLET_DIR  = BASE_DIR + "img/laser-bullet/";
+const string BONUS_DIR = BASE_DIR + "img/bonus/";
+const string HEALTH_BAR_DIR = BASE_DIR + "img/health-bar/";
+const string BACKGROUND_PATH = BASE_DIR + "img/background/purple.png";
+const string BLACK_HOLE_PATH = BASE_DIR + "img/black-hole/blackHole.png";
 
 Leader* leader1;
 Leader* leader2;
 
+HealthBar* leader1HealthBar;
+HealthBar* leader2HealthBar;
 
 vector<Entity*> leader1Entities;
 vector<Entity*> leader2Entities;
 
 vector<Bullet*> leader1Bullets;
+vector<Bullet*> leader1EntityBullets;
 vector<Bullet*> leader2Bullets;
+vector<Bullet*> leader2EntityBullets;
 
 vector<BonusEntity*> bonus_entity_objects;
+vector<BonusBulletEnhance*> bonus_bullet_enhance_objects;
+vector<BonusBulletAmmunition*> bonus_bullet_ammunition_objects;
 
 
 bool init();
@@ -73,44 +86,60 @@ int main(int argc, const char * argv[])
     }
     else
     {
-        Vector2 leader1_init_position = generate_random_position(ACTUAL_WINDOW_WIDTH/2, ACTUAL_WINDOW_WIDTH/3, ACTUAL_WINDOW_HEIGHT/2, ACTUAL_WINDOW_HEIGHT*2/3);
-        leader1 = new Leader(leader1_init_position, ACTUAL_WINDOW_WIDTH, ACTUAL_WINDOW_HEIGHT);
+        Vector2 leader1_init_position = generate_random_position(0, ACTUAL_WINDOW_WIDTH/3, 0, ACTUAL_WINDOW_HEIGHT/2);
+        leader1 = new Leader(leader1_init_position, 0, ACTUAL_WINDOW_WIDTH, 0, ACTUAL_WINDOW_HEIGHT);
         leader1->setPlaneType("playerShip1_red");
         leader1->setBulletType("laserRed");
-        leader1->setBulletLevel("_1");
+        leader1->setBulletLevel(1);
         leader1->loadFromFile(LEADER_DIR + leader1->planeType + ".png", renderer);
         leader1->setInitialSpeed(100);
         leader1->setMaxSpeed(750);
-        leader1->setAngle(0);
+        leader1->setAngle(180);
         leader1->setAcceleration(200);
         leader1->setDeacceleration(600);
         leader1->setFriction(0);
         leader1->setMaxEntityNumber(10);
         leader1->setMaxNumBulletsPerPress(15);
+        leader1->setFullHealth(100);
         
-
-        Vector2 leader2_init_position = generate_random_position(ACTUAL_WINDOW_WIDTH/3, ACTUAL_WINDOW_WIDTH/2, 0, ACTUAL_WINDOW_HEIGHT/3);
-        leader2 = new Leader(leader2_init_position, WINDOW_WIDTH, WINDOW_HEIGHT);
+        Vector2 leader1HealthBar_init_position = Vector2(0, 0);
+        leader1HealthBar = new HealthBar(leader1HealthBar_init_position, leader1->fullHealth);
+        leader1HealthBar->loadFromFile(HEALTH_BAR_DIR + "healthBar_left.png", renderer);
+        leader1HealthBar->setActualWidth(ACTUAL_WINDOW_WIDTH/2 - 10);
+        leader1HealthBar->setActualHeight(HEALTH_BAR_HEIGHT);
+        leader1HealthBar->setClipDimensions(0, 0, leader1HealthBar->getActualWidth(), leader1HealthBar->getActualHeight());
+        
+        Vector2 leader2_init_position = generate_random_position(ACTUAL_WINDOW_WIDTH/2, ACTUAL_WINDOW_WIDTH*2/3, 0, ACTUAL_WINDOW_HEIGHT/3);
+        leader2 = new Leader(leader2_init_position, 0, ACTUAL_WINDOW_WIDTH, 0, ACTUAL_WINDOW_HEIGHT);
         leader2->setPlaneType("playerShip3_green");
         leader2->setBulletType("laserGreen");
-        leader2->setBulletLevel("_1");
+        leader2->setBulletLevel(1);
         leader2->loadFromFile(LEADER_DIR + leader2->planeType + ".png", renderer);
         leader2->setInitialSpeed(100);
         leader2->setMaxSpeed(500);
-        leader2->setAngle(180);
+        leader2->setAngle(0);
         leader2->setAcceleration(100);
         leader2->setDeacceleration(300);
         leader2->setFriction(0);
         leader2->setMaxEntityNumber(10);
         leader2->setMaxNumBulletsPerPress(10);
-
+        leader2->setFullHealth(100);
+        
+        Vector2 leader2HealthBar_init_position = Vector2(ACTUAL_WINDOW_WIDTH/2 + 10, 0);
+        leader2HealthBar = new HealthBar(leader2HealthBar_init_position, leader2->fullHealth);
+        leader2HealthBar->loadFromFile(HEALTH_BAR_DIR + "healthBar_right.png", renderer);
+        leader2HealthBar->setActualWidth(ACTUAL_WINDOW_WIDTH/2 - 10);
+        leader2HealthBar->setActualHeight(HEALTH_BAR_HEIGHT);
+        leader2HealthBar->setClipDimensions(0, 0, leader2HealthBar->getActualWidth(), leader2HealthBar->getActualHeight());
         
         LTexture background(1);
         background.loadFromFile(BACKGROUND_PATH, renderer);
 
-        
         BonusEntity::setGlobalThreshold(1);
         BonusEntity::setMaxNumObjects(1);
+        
+        BonusBulletEnhance::setGlobalThreshold(1);
+        BonusBulletEnhance::setMaxNumObjects(1);
         
         
         float currentFrameTime = 0;
@@ -145,13 +174,12 @@ int main(int argc, const char * argv[])
                 {
                     BonusEntity::globalCounter = 0;
                 }
-                
                 if (BonusEntity::globalCounter > BonusEntity::globalThreshold && bonus_entity_objects.size() < BonusEntity::maxNumObjects)
                 {
                     Vector2 pos = generate_random_position(0, ACTUAL_WINDOW_WIDTH - 60, 0, ACTUAL_WINDOW_HEIGHT - 60);
                     BonusEntity* tempBonusEntity = new BonusEntity(pos.x, pos.y);
                     int index = generate_random_int(0, 3);
-                    tempBonusEntity->loadFromFile(BONUS_ENTITY_DIR + BonusEntity::bonusFileArray[index], renderer);
+                    tempBonusEntity->loadFromFile(BONUS_DIR + BonusEntity::bonusFileArray[index], renderer);
                     tempBonusEntity->setColor(BonusEntity::colorArray[index]);
                     tempBonusEntity->setActualWidth(60);
                     tempBonusEntity->setActualHeight(60);
@@ -159,7 +187,6 @@ int main(int argc, const char * argv[])
                     BonusEntity::globalPrevious = currentFrameTime;
                     BonusEntity::globalCounter = 0;
                 }
-                
                 for (vector<BonusEntity*>::iterator it = bonus_entity_objects.begin(); it != bonus_entity_objects.end();)
                 {
                     BonusEntity* b = *it;
@@ -169,12 +196,14 @@ int main(int argc, const char * argv[])
                         {
                             string color = b->getColor();
                             Vector2 init_position = b->position;
-                            Entity* tempEntity = new Entity(init_position, WINDOW_WIDTH, WINDOW_HEIGHT);
+                            Entity* tempEntity = new Entity(init_position);
                             tempEntity->loadFromFile(ENTITY_DIR + BonusEntity::entityFileMap[color], renderer);
                             tempEntity->setThreshold(30);
                             tempEntity->setActualWidth(60);
                             tempEntity->setActualHeight(60);
                             tempEntity->setSpeed(1);
+                            tempEntity->setBulletThreshold(1);
+                            tempEntity->setBulletType("entity_" + color);
                             leader1Entities.push_back(tempEntity);
                             leader1->numEntities++;
                         }
@@ -184,6 +213,21 @@ int main(int argc, const char * argv[])
                     }
                     else if (b->detectCollision(leader2->position.x, leader2->position.y, leader2->getActualWidth(), leader2->getActualHeight()))
                     {
+                        if (leader2->numEntities < leader2->maxNumEntities)
+                        {
+                            string color = b->getColor();
+                            Vector2 init_position = b->position;
+                            Entity* tempEntity = new Entity(init_position);
+                            tempEntity->loadFromFile(ENTITY_DIR + BonusEntity::entityFileMap[color], renderer);
+                            tempEntity->setThreshold(30);
+                            tempEntity->setActualWidth(60);
+                            tempEntity->setActualHeight(60);
+                            tempEntity->setSpeed(1);
+                            tempEntity->setBulletThreshold(1);
+                            tempEntity->setBulletType("entity_" + color);
+                            leader2Entities.push_back(tempEntity);
+                            leader2->numEntities++;
+                        }
                         bonus_entity_objects.erase(it);
                         delete b;
                     }
@@ -196,17 +240,105 @@ int main(int argc, const char * argv[])
                 }
                 
                 
+                BonusBulletEnhance::globalCounter = currentFrameTime - BonusBulletEnhance::globalPrevious;
+                if (bonus_bullet_enhance_objects.size() > BonusBulletEnhance::maxNumObjects)
+                {
+                    BonusBulletEnhance::globalCounter = 0;
+                }
+                if (BonusBulletEnhance::globalCounter > BonusBulletEnhance::globalThreshold &&
+                    bonus_bullet_enhance_objects.size() < BonusBulletEnhance::maxNumObjects)
+                {
+                    Vector2 pos = generate_random_position(0, ACTUAL_WINDOW_WIDTH - 20, 0, ACTUAL_WINDOW_HEIGHT - 30);
+                    BonusBulletEnhance* tempBonusBulletEnhance = new BonusBulletEnhance(pos.x, pos.y);
+                    tempBonusBulletEnhance->loadFromFile(BONUS_DIR + "level-up.png", renderer);
+                    tempBonusBulletEnhance->setActualWidth(40);
+                    tempBonusBulletEnhance->setActualHeight(60);
+                    bonus_bullet_enhance_objects.push_back(tempBonusBulletEnhance);
+                    BonusEntity::globalPrevious = currentFrameTime;
+                    BonusEntity::globalCounter = 0;
+                }
+                for (vector<BonusBulletEnhance*>::iterator it = bonus_bullet_enhance_objects.begin(); it != bonus_bullet_enhance_objects.end();)
+                {
+                    BonusBulletEnhance* b = *it;
+                    if (b->detectCollision(leader1->position.x, leader1->position.y, leader1->getActualWidth(), leader1->getActualHeight()))
+                    {
+                        if (leader1->bulletLevel < 4)
+                        {
+                            ++leader1->bulletLevel;
+                        }
+                        bonus_bullet_enhance_objects.erase(it);
+                        delete b;
+                        
+                    }
+                    else if (b->detectCollision(leader2->position.x, leader2->position.y, leader2->getActualWidth(), leader2->getActualHeight()))
+                    {
+                        if (leader2->bulletLevel < 4)
+                        {
+                            ++leader2->bulletLevel;
+                        }
+                        bonus_bullet_enhance_objects.erase(it);
+                        delete b;
+                    }
+                    else
+                    {
+                        b->render(b->position.x, b->position.y, NULL, renderer);
+                        b->updateAngle();
+                        ++it;
+                    }
+                }
+                
+                BonusBulletAmmunition::globalCounter = currentFrameTime - BonusBulletAmmunition::globalPrevious;
+                if (bonus_bullet_ammunition_objects.size() > BonusBulletAmmunition::maxNumObjects)
+                {
+                    BonusBulletAmmunition::globalCounter = 0;
+                }
+                if (BonusBulletAmmunition::globalCounter > BonusBulletAmmunition::globalThreshold &&
+                    bonus_bullet_ammunition_objects.size() < BonusBulletAmmunition::maxNumObjects)
+                {
+                    Vector2 pos = generate_random_position(0, ACTUAL_WINDOW_WIDTH - 20, 0, ACTUAL_WINDOW_HEIGHT - 20);
+                    BonusBulletAmmunition* tempBonusBulletAmmunition = new BonusBulletAmmunition(pos.x, pos.y);
+                    tempBonusBulletAmmunition->loadFromFile(BONUS_DIR + "bullet-double.png", renderer);
+                    tempBonusBulletAmmunition->setActualWidth(50);
+                    tempBonusBulletAmmunition->setActualHeight(50);
+                    bonus_bullet_ammunition_objects.push_back(tempBonusBulletAmmunition);
+                    BonusEntity::globalPrevious = currentFrameTime;
+                    BonusEntity::globalCounter = 0;
+                }
+                for (vector<BonusBulletAmmunition*>::iterator it = bonus_bullet_ammunition_objects.begin(); it != bonus_bullet_ammunition_objects.end();)
+                {
+                    BonusBulletAmmunition* b = *it;
+                    if (b->detectCollision(leader1->position.x, leader1->position.y, leader1->getActualWidth(), leader1->getActualHeight()))
+                    {
+                        leader1->maxNumBulletsPerPress *= 2;
+                        bonus_bullet_ammunition_objects.erase(it);
+                        delete b;
+                        
+                    }
+                    else if (b->detectCollision(leader2->position.x, leader2->position.y, leader2->getActualWidth(), leader2->getActualHeight()))
+                    {
+                        leader2->maxNumBulletsPerPress *= 2;
+                        bonus_bullet_ammunition_objects.erase(it);
+                        delete b;
+                    }
+                    else
+                    {
+                        b->render(b->position.x, b->position.y, NULL, renderer);
+                        b->updateAngle();
+                        ++it;
+                    }
+                }
                 
                 for (vector<Bullet*>::iterator it = leader1Bullets.begin(); it != leader1Bullets.end();)
                 {
                     Bullet* b = *it;
-                    if (b->offScreen(WINDOW_WIDTH, WINDOW_HEIGHT))
+                    if (b->offScreen(ACTUAL_WINDOW_WIDTH, ACTUAL_WINDOW_HEIGHT))
                     {
                         leader1Bullets.erase(it);
                         delete b;
                     }
                     else if (leader2->detectCollision(b->position.x, b->position.y, b->getActualWidth(), b->getActualHeight()))
                     {
+                        leader2->loseHealth(b->bulletName);
                         leader1Bullets.erase(it);
                         delete b;
                     }
@@ -218,6 +350,74 @@ int main(int argc, const char * argv[])
                     }
                 }
                 
+                for (vector<Bullet*>::iterator it = leader2Bullets.begin(); it != leader2Bullets.end();)
+                {
+                    Bullet* b = *it;
+                    if (b->offScreen(ACTUAL_WINDOW_WIDTH, ACTUAL_WINDOW_HEIGHT))
+                    {
+                        leader2Bullets.erase(it);
+                        delete b;
+                    }
+                    else if (leader1->detectCollision(b->position.x, b->position.y, b->getActualWidth(), b->getActualHeight()))
+                    {
+                        leader1->loseHealth(b->bulletName);
+                        
+                        leader2Bullets.erase(it);
+                        delete b;
+                    }
+                    else
+                    {
+                        b->render(b->position.x, b->position.y, NULL, renderer);
+                        b->updatePosition(elapsedTime);
+                        ++it;
+                    }
+                }
+                
+                for (vector<Bullet*>::iterator it = leader1EntityBullets.begin(); it != leader1EntityBullets.end();)
+                {
+                    Bullet* b = *it;
+                    if (b->offScreen(ACTUAL_WINDOW_WIDTH, ACTUAL_WINDOW_HEIGHT))
+                    {
+                        leader1EntityBullets.erase(it);
+                        delete b;
+                    }
+                    else if (leader2->detectCollision(b->position.x, b->position.y, b->getActualWidth(), b->getActualHeight()))
+                    {
+                        leader2->loseHealth(b->bulletName);
+                        leader1EntityBullets.erase(it);
+                        delete b;
+                    }
+                    else
+                    {
+                        b->render(b->position.x, b->position.y, NULL, renderer);
+                        b->updatePosition(elapsedTime);
+                        ++it;
+                    }
+                }
+                
+                for (vector<Bullet*>::iterator it = leader2EntityBullets.begin(); it != leader2EntityBullets.end();)
+                {
+                    Bullet* b = *it;
+                    if (b->offScreen(ACTUAL_WINDOW_WIDTH, ACTUAL_WINDOW_HEIGHT))
+                    {
+                        leader2EntityBullets.erase(it);
+                        delete b;
+                    }
+                    else if (leader1->detectCollision(b->position.x, b->position.y, b->getActualWidth(), b->getActualHeight()))
+                    {
+                        leader1->loseHealth(b->bulletName);
+                        leader2EntityBullets.erase(it);
+                        delete b;
+                    }
+                    else
+                    {
+                        b->render(b->position.x, b->position.y, NULL, renderer);
+                        b->updatePosition(elapsedTime);
+                        ++it;
+                    }
+                }
+                
+                
                 // Draw the first player
                 leader1->render(leader1->position.x, leader1->position.y, NULL, renderer);
                 leader1->updateCenter();
@@ -227,113 +427,175 @@ int main(int argc, const char * argv[])
                 // Draw the second player
                 leader2->render(leader2->position.x, leader2->position.y, NULL, renderer);
                 leader2->updateCenter();
+                leader2->updateAvgRotation();
 
                 
-                // Update position for each entity
+                // Draw and update position of the first player's entities
                 int counter = 0;
                 for (vector<Entity*>::iterator it = leader1Entities.begin(); it != leader1Entities.end();)
                 {
                     Entity* e = *it;
-                    if (!e->checkIfCounterDone())
+                    if (!e->checkIfDisappear())
                     {
                         e->updateCenter();
                         e->updateCounter(elapsedTime);
-                        e->render(e->position.x, e->position.y, NULL, renderer);
+                        e->updateBulletCounter(elapsedTime);
+                        e->updatePosition();
+                        e->updateTargetPosition(leader1);
                         Vector2 target = leader2->center - e->position;
                         float angle = atan2f(target.y, target.x) * 180 / PI;
                         e->setAngle(angle);
-                        e->updateTargetPosition(leader1);
+                        e->render(e->position.x, e->position.y, NULL, renderer);
                         if (counter > 0)
                         {
                             float rotationShouldHave = leader1Entities[0]->rotation + leader1->avgRotation * counter;
                             if (leader1Entities[counter]->rotation < rotationShouldHave)
-                            {
                                 leader1Entities[counter]->rotation = rotationShouldHave;
-                            }
                         }
-                        e->updatePosition(leader1);
+                        if (e->checkIfFireBullet())
+                        {
+                            Vector2 position = e->center;
+                            Bullet* tempBullet = new Bullet(position, e->angle, e->bulletType);
+                            tempBullet->loadFromFile(BULLET_DIR + e->bulletType + ".png", renderer);
+                            tempBullet->setPosition(position);
+                            leader1EntityBullets.push_back(tempBullet);
+                        }
                         ++counter;
                         ++it;
                     }
                     else
                     {
+                        leader1->numEntities--;
                         leader1Entities.erase(it);
                         delete e;
                     }
                 }
                 
-                for (Entity* e : leader2Entities)
+                
+                // Draw and update position of the second player's entities
+                counter = 0;
+                for (vector<Entity*>::iterator it = leader2Entities.begin(); it != leader2Entities.end();)
                 {
-                    e->updateCenter();
-                    e->render(e->position.x, e->position.y, NULL, renderer);
-                    Vector2 target = leader1->center - e->position;
-                    float angle = atan2f(target.y, target.x) * 180 / PI;
-                    e->setAngle(angle);
-                    e->updateTargetPosition(leader2);
-                    e->updatePosition(leader2);
+                    Entity* e = *it;
+                    if (!e->checkIfDisappear())
+                    {
+                        e->updateCenter();
+                        e->updateCounter(elapsedTime);
+                        e->updateBulletCounter(elapsedTime);
+                        e->updateTargetPosition(leader2);
+                        e->updatePosition();
+                        Vector2 target = leader1->center - e->position;
+                        float angle = atan2f(target.y, target.x) * 180 / PI;
+                        e->setAngle(angle);
+                        e->render(e->position.x, e->position.y, NULL, renderer);
+                        if (counter > 0)
+                        {
+                            float rotationShouldHave = leader2Entities[0]->rotation + leader2->avgRotation * counter;
+                            if (leader2Entities[counter]->rotation < rotationShouldHave)
+                                leader2Entities[counter]->rotation = rotationShouldHave;
+                        }
+                        if (e->checkIfFireBullet())
+                        {
+                            Vector2 position = e->center;
+                            Bullet* tempBullet = new Bullet(position, e->angle, e->bulletType);
+                            tempBullet->loadFromFile(BULLET_DIR + e->bulletType + ".png", renderer);
+                            tempBullet->setPosition(position);
+                            leader2EntityBullets.push_back(tempBullet);
+                        }
+                        ++counter;
+                        ++it;
+                    }
+                    else
+                    {
+                        leader2->numEntities--;
+                        leader2Entities.erase(it);
+                        delete e;
+                    }
                 }
-            
-                leader1->updatePosition(elapsedTime);
+   
+                
                 
                 // Leader 1 Controller
-                if (KEYS[SDL_SCANCODE_UP]) {
+                leader1->updatePosition(elapsedTime);
+                if (KEYS[SDL_SCANCODE_W]) {
                     leader1->updateSpeed(1, elapsedTime);
                 }
                 
-                if (KEYS[SDL_SCANCODE_DOWN]) {
+                if (KEYS[SDL_SCANCODE_S]) {
                     leader1->updateSpeed(-1, elapsedTime);
                 }
                 
-                if (KEYS[SDL_SCANCODE_LEFT])
-                {   // rotate plane left
+                if (KEYS[SDL_SCANCODE_A])
+                {
+                    // rotate plane left
                     leader1->updateAngle(-1);
                 }
                 
-                if (KEYS[SDL_SCANCODE_RIGHT])
-                {   // rotate plane right
+                if (KEYS[SDL_SCANCODE_D])
+                {
+                    // rotate plane right
                     leader1->updateAngle(1);
                 }
-                
 
-                if (KEYS[SDL_SCANCODE_SPACE] && leader1->numBulletsPerPress > 0)
+                if (KEYS[SDL_SCANCODE_LSHIFT] && leader1->numBulletsPerPress > 0)
                 {
                     Vector2 position = leader1->center;
-                    Bullet* tempBullet = new Bullet(position, leader1->angle);
-                    tempBullet->loadFromFile(BULLET_DIR + leader1->bulletType + leader1->bulletLevel + ".png", renderer);
+                    Bullet* tempBullet = new Bullet(position, leader1->angle, leader1->bulletType + "_" + to_string(leader1->bulletLevel));
+                    tempBullet->loadFromFile(BULLET_DIR + leader1->bulletType + "_" + to_string(leader1->bulletLevel) + ".png", renderer);
                     tempBullet->setPosition(position);
                     leader1Bullets.push_back(tempBullet);
                     --leader1->numBulletsPerPress;
                 }
                 
-                if (!KEYS[SDL_SCANCODE_SPACE])
+                if (!KEYS[SDL_SCANCODE_LSHIFT])
                 {
                     leader1->numBulletsPerPress = leader1->maxNumBulletsPerPress;
                 }
                 
-                
-                
-                
-                leader2->updatePosition(elapsedTime);
 
                 // Leader 2 Controller
-                if (KEYS[SDL_SCANCODE_W]) {
+                leader2->updatePosition(elapsedTime);
+                if (KEYS[SDL_SCANCODE_UP]) {
                     leader2->updateSpeed(1, elapsedTime);
                 }
                 
-                if (KEYS[SDL_SCANCODE_S]) {
+                if (KEYS[SDL_SCANCODE_DOWN]) {
                     leader2->updateSpeed(-1, elapsedTime);
                 }
                 
-                if (KEYS[SDL_SCANCODE_A])
-                {   // rotate plane right
-                    leader2->updateAngle(1);
-                }
-                
-                if (KEYS[SDL_SCANCODE_D])
-                {   // rotate plane right
+                if (KEYS[SDL_SCANCODE_LEFT])
+                {
+                    // rotate plane left
                     leader2->updateAngle(-1);
                 }
                 
+                if (KEYS[SDL_SCANCODE_RIGHT])
+                {
+                    // rotate plane right
+                    leader2->updateAngle(1);
+                }
+
+                if (KEYS[SDL_SCANCODE_SPACE] && leader2->numBulletsPerPress > 0)
+                {
+                    Vector2 position = leader2->center;
+                    Bullet* tempBullet = new Bullet(position, leader2->angle, leader2->bulletType + "_" + to_string(leader2->bulletLevel));
+                    tempBullet->loadFromFile(BULLET_DIR + leader2->bulletType + "_" + to_string(leader2->bulletLevel) + ".png", renderer);
+                    tempBullet->setPosition(position);
+                    leader2Bullets.push_back(tempBullet);
+                    --leader2->numBulletsPerPress;
+                }
+                
+                if (!KEYS[SDL_SCANCODE_SPACE])
+                {
+                    leader2->numBulletsPerPress = leader2->maxNumBulletsPerPress;
+                }
+                
+                
+                // Draw the health bars for both players
+                leader1HealthBar->render(leader1HealthBar->position.x, leader1HealthBar->position.y, &leader1HealthBar->rect, renderer);
+                leader1HealthBar->updateHealthBarLength(leader1->health/leader1->fullHealth, "left");
+                leader2HealthBar->render(leader2HealthBar->position.x + (1 - leader2->health/leader2->fullHealth) * leader2HealthBar->getActualWidth(), leader2HealthBar->position.y, &leader2HealthBar->rect, renderer);
+                leader2HealthBar->updateHealthBarLength(leader2->health/leader2->fullHealth, "right");
               
             }
             
@@ -382,7 +644,9 @@ bool init()
                 printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError());
                 success = false;
             }
-//            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+            ACTUAL_WINDOW_WIDTH  = WINDOW_WIDTH;
+            ACTUAL_WINDOW_HEIGHT = WINDOW_HEIGHT;
+            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
             SDL_DisplayMode display_mode;
             SDL_GetCurrentDisplayMode(0, &display_mode);
             ACTUAL_WINDOW_WIDTH = display_mode.w;
@@ -427,11 +691,36 @@ void close()
         b = NULL;
     }
     
+    for (Bullet* b : leader1EntityBullets)
+    {
+        delete b;
+        b = NULL;
+    }
+    
+    for (Bullet* b : leader2EntityBullets)
+    {
+        delete b;
+        b = NULL;
+    }
+    
     for (BonusEntity* b :bonus_entity_objects)
     {
         delete b;
         b = NULL;
     }
+    
+    for (BonusBulletEnhance* b : bonus_bullet_enhance_objects)
+    {
+        delete b;
+        b = NULL;
+    }
+    
+    for (BonusBulletAmmunition* b : bonus_bullet_ammunition_objects)
+    {
+        delete b;
+        b = NULL;
+    }
+    
     
     // Destroy window
     SDL_DestroyRenderer(renderer);
@@ -478,6 +767,7 @@ void enable2D(int width, int height) {
 
 void draw_rect(int x, int y, int width, int height)
 {
+    
     SDL_Rect rect = {  x, y, width, height };
     SDL_RenderFillRect(renderer, &rect);
 }
