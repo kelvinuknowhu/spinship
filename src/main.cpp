@@ -796,11 +796,11 @@ bool init()
             }
             ACTUAL_WINDOW_WIDTH  = WINDOW_WIDTH;
             ACTUAL_WINDOW_HEIGHT = WINDOW_HEIGHT;
-//            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-//            SDL_DisplayMode display_mode;
-//            SDL_GetCurrentDisplayMode(0, &display_mode);
-//            ACTUAL_WINDOW_WIDTH = display_mode.w;
-//            ACTUAL_WINDOW_HEIGHT = display_mode.h;
+            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+            SDL_DisplayMode display_mode;
+            SDL_GetCurrentDisplayMode(0, &display_mode);
+            ACTUAL_WINDOW_WIDTH = display_mode.w;
+            ACTUAL_WINDOW_HEIGHT = display_mode.h;
         }
         else
         {
