@@ -12,7 +12,7 @@ void Gravity::updateCenter()
 {
     int width = this->getActualWidth();
     int height = this->getActualHeight();
-    center += Vector2(width/2, height/2);
+    center = position + Vector2(width/2, height/2);
 }
 
 void Gravity::update(Leader *element, float ticks = 1)

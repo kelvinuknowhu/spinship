@@ -19,7 +19,7 @@ public:
     Vector2 position = Vector2(0, 0);
     SDL_Rect rect = { 0, 0, 0, 0 };
     
-    HealthBar(Vector2 initPosition, float initHealth) : LTexture(1)
+    HealthBar(Vector2 initPosition) : LTexture(1)
     {
         position = initPosition;
     }

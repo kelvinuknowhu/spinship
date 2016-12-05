@@ -53,10 +53,10 @@ const string HEALTH_BAR_DIR = BASE_DIR + "img/health-bar/";
 const string BACKGROUND_PATH = BASE_DIR + "img/background/purple.png";
 const string GRAVITY_PATH = BASE_DIR + "img/black-hole/meteor.png";
 
-const string INTERFACE_PATH = BASE_DIR + "img/interface/interface_1.png";
+const string INTERFACE_PATH = BASE_DIR + "img/interface/interface_start.png";
 const string LIGHTBEAM_PATH = BASE_DIR + "img/interface/lightBeam.png";
-const string LIGHTBEAM_PATH_REVERSE = BASE_DIR + "img/interface/lightBeam_hor.png";
-const string CHOOSEPLANE_PATH = BASE_DIR + "img/interface/choosePlane.png";
+const string LIGHTBEAM_PATH_FLIP = BASE_DIR + "img/interface/lightBeam_flip.png";
+const string CHOOSEPLANE_PATH = BASE_DIR + "img/interface/interface_choose_plane.png";
 const string WORD_PATH = BASE_DIR + "img/interface/word.png";
 const string INSTRUCTION_PATH = BASE_DIR + "img/interface/instruction.png";
 
@@ -80,7 +80,8 @@ vector<BonusEntity*> bonus_entity_objects;
 vector<BonusBulletEnhance*> bonus_bullet_enhance_objects;
 vector<BonusBulletAmmunition*> bonus_bullet_ammunition_objects;
 
-
+vector<Gravity*> gravity_objects;
+const int NUM_GRAVITY_OBJECTS = 3;
 
 
 bool init();
@@ -99,63 +100,43 @@ int main(int argc, const char * argv[])
     }
     else
     {
-        
         Vector2 interface_init_position(0, 0);
         Interface it(interface_init_position, WORD_PATH);
         it.loadFromFile(INTERFACE_PATH, renderer);
         it.setActualWidth(ACTUAL_WINDOW_WIDTH);
         it.setActualHeight(ACTUAL_WINDOW_HEIGHT);
-        it.update(LIGHTBEAM_PATH, LIGHTBEAM_PATH_REVERSE, renderer);
-        
-        
-        Vector2 leader1_init_position = generate_random_position(0, ACTUAL_WINDOW_WIDTH/3, 0, ACTUAL_WINDOW_HEIGHT/2);
-        leader1 = new Leader(leader1_init_position, 0, ACTUAL_WINDOW_WIDTH, 0, ACTUAL_WINDOW_HEIGHT);
-        
-        Vector2 leader2_init_position = generate_random_position(ACTUAL_WINDOW_WIDTH/2, ACTUAL_WINDOW_WIDTH*2/3, 0, ACTUAL_WINDOW_HEIGHT/3);
-        leader2 = new Leader(leader2_init_position, 0, ACTUAL_WINDOW_WIDTH, 0, ACTUAL_WINDOW_HEIGHT);
-        
-        
+        it.update(LIGHTBEAM_PATH, LIGHTBEAM_PATH_FLIP, renderer);
         LTexture background(1);
         background.loadFromFile(BACKGROUND_PATH, renderer);
 
-        BonusEntity::setGlobalThreshold(1);
-        BonusEntity::setMaxNumObjects(1);
-        
-        BonusBulletEnhance::setGlobalThreshold(1);
+        BonusEntity::setGlobalThreshold(5);
+        BonusEntity::setMaxNumObjects(3);
+        BonusBulletAmmunition::setGlobalThreshold(7);
+        BonusBulletAmmunition::setMaxNumObjects(3);
+        BonusBulletEnhance::setGlobalThreshold(9);
         BonusBulletEnhance::setMaxNumObjects(1);
         
-        Vector2 gravity_position = generate_random_position(0, ACTUAL_WINDOW_WIDTH - 150, 0, ACTUAL_WINDOW_HEIGHT - 150);
-        Gravity gravity(gravity_position, 1);
-        gravity.loadFromFile(GRAVITY_PATH, renderer);
-        gravity.setActualWidth(150);
-        gravity.setActualHeight(150);
-        gravity.updateCenter();
-        
-        
-        
-        
-        float currentFrameTime = 0;
-        float previousFrameTime = 0;
-        float elapsedTime = 0;
-
-        bool notpress = true;
-        float presstick = 0;
-        
-        
-        SDL_Event event;
-        bool done = false;
-        bool gameOver = true;
+        for (int i = 1; i <= NUM_GRAVITY_OBJECTS; i++)
+        {
+            Vector2 gravity_position = generate_random_position(150 * i, ACTUAL_WINDOW_WIDTH - 150 * i, 150 * i, ACTUAL_WINDOW_HEIGHT - 150 * i);
+            Gravity* tempGravity = new Gravity(gravity_position, 1);
+            tempGravity->loadFromFile(GRAVITY_PATH, renderer);
+            tempGravity->setActualWidth(150);
+            tempGravity->setActualHeight(150);
+            tempGravity->updateCenter();
+            gravity_objects.push_back(tempGravity);
+        }
         
         
         Vector2 leader1HealthBar_init_position(0, 10);
-        leader1HealthBar = new HealthBar(leader1HealthBar_init_position, leader1->fullHealth);
+        leader1HealthBar = new HealthBar(leader1HealthBar_init_position);
         leader1HealthBar->loadFromFile(HEALTH_BAR_DIR + "healthBar_left.png", renderer);
         leader1HealthBar->setActualWidth(ACTUAL_WINDOW_WIDTH/2 - 10);
         leader1HealthBar->setActualHeight(HEALTH_BAR_HEIGHT);
         leader1HealthBar->setClipDimensions(0, 0, leader1HealthBar->getActualWidth(), leader1HealthBar->getActualHeight());
         
         Vector2 leader2HealthBar_init_position(ACTUAL_WINDOW_WIDTH/2 + 10, 10);
-        leader2HealthBar = new HealthBar(leader2HealthBar_init_position, leader2->fullHealth);
+        leader2HealthBar = new HealthBar(leader2HealthBar_init_position);
         leader2HealthBar->loadFromFile(HEALTH_BAR_DIR + "healthBar_right.png", renderer);
         leader2HealthBar->setActualWidth(ACTUAL_WINDOW_WIDTH/2 - 10);
         leader2HealthBar->setActualHeight(HEALTH_BAR_HEIGHT);
@@ -171,6 +152,16 @@ int main(int argc, const char * argv[])
         leader2HealthBarFrame->setActualWidth(ACTUAL_WINDOW_WIDTH/2 - 10);
         leader2HealthBarFrame->setActualHeight(HEALTH_BAR_HEIGHT);
         
+        
+        SDL_Event event;
+        bool done = false;
+        bool gameOver = true;
+        bool notPressed = true;
+        float currentFrameTime = 0;
+        float previousFrameTime = 0;
+        float elapsedTime = 0;
+        float pressTick = 0;
+
         while (!done)
         {
             while (SDL_PollEvent(&event))
@@ -192,10 +183,13 @@ int main(int argc, const char * argv[])
                 // Draw the background
                 background.render(0, 0, NULL, renderer);
                 
-                gravity.render(gravity.position.x, gravity.position.y, NULL, renderer);
-                gravity.update(elapsedTime);
-                gravity.update(leader1, elapsedTime);
-                gravity.update(leader2, elapsedTime);
+                for (Gravity* g : gravity_objects)
+                {
+                    g->render(g->position.x, g->position.y, NULL, renderer);
+                    g->update(elapsedTime);
+                    g->update(leader1, elapsedTime);
+                    g->update(leader2, elapsedTime);
+                }
                 
                 BonusEntity::globalCounter = currentFrameTime - BonusEntity::globalPrevious;
                 if (bonus_entity_objects.size() >= BonusEntity::maxNumObjects)
@@ -263,11 +257,11 @@ int main(int argc, const char * argv[])
                     {
                         b->render(b->position.x, b->position.y, NULL, renderer);
                         b->updateAngle();
-                        ++it;
+                        it++;
                     }
                 }
                 
-                
+
                 BonusBulletEnhance::globalCounter = currentFrameTime - BonusBulletEnhance::globalPrevious;
                 if (bonus_bullet_enhance_objects.size() > BonusBulletEnhance::maxNumObjects)
                 {
@@ -282,8 +276,8 @@ int main(int argc, const char * argv[])
                     tempBonusBulletEnhance->setActualWidth(40);
                     tempBonusBulletEnhance->setActualHeight(60);
                     bonus_bullet_enhance_objects.push_back(tempBonusBulletEnhance);
-                    BonusEntity::globalPrevious = currentFrameTime;
-                    BonusEntity::globalCounter = 0;
+                    BonusBulletEnhance::globalPrevious = currentFrameTime;
+                    BonusBulletEnhance::globalCounter = 0;
                 }
                 for (vector<BonusBulletEnhance*>::iterator it = bonus_bullet_enhance_objects.begin(); it != bonus_bullet_enhance_objects.end();)
                 {
@@ -292,7 +286,7 @@ int main(int argc, const char * argv[])
                     {
                         if (leader1->bulletLevel < 4)
                         {
-                            ++leader1->bulletLevel;
+                            leader1->bulletLevel++;
                         }
                         bonus_bullet_enhance_objects.erase(it);
                         delete b;
@@ -302,7 +296,7 @@ int main(int argc, const char * argv[])
                     {
                         if (leader2->bulletLevel < 4)
                         {
-                            ++leader2->bulletLevel;
+                            leader2->bulletLevel++;
                         }
                         bonus_bullet_enhance_objects.erase(it);
                         delete b;
@@ -311,7 +305,7 @@ int main(int argc, const char * argv[])
                     {
                         b->render(b->position.x, b->position.y, NULL, renderer);
                         b->updateAngle();
-                        ++it;
+                        it++;
                     }
                 }
                 
@@ -329,8 +323,8 @@ int main(int argc, const char * argv[])
                     tempBonusBulletAmmunition->setActualWidth(50);
                     tempBonusBulletAmmunition->setActualHeight(50);
                     bonus_bullet_ammunition_objects.push_back(tempBonusBulletAmmunition);
-                    BonusEntity::globalPrevious = currentFrameTime;
-                    BonusEntity::globalCounter = 0;
+                    BonusBulletAmmunition::globalPrevious = currentFrameTime;
+                    BonusBulletAmmunition::globalCounter = 0;
                 }
                 for (vector<BonusBulletAmmunition*>::iterator it = bonus_bullet_ammunition_objects.begin(); it != bonus_bullet_ammunition_objects.end();)
                 {
@@ -352,7 +346,7 @@ int main(int argc, const char * argv[])
                     {
                         b->render(b->position.x, b->position.y, NULL, renderer);
                         b->updateAngle();
-                        ++it;
+                        it++;
                     }
                 }
                 
@@ -374,7 +368,7 @@ int main(int argc, const char * argv[])
                     {
                         b->render(b->position.x, b->position.y, NULL, renderer);
                         b->updatePosition(elapsedTime);
-                        ++it;
+                        it++;
                     }
                 }
                 
@@ -397,7 +391,7 @@ int main(int argc, const char * argv[])
                     {
                         b->render(b->position.x, b->position.y, NULL, renderer);
                         b->updatePosition(elapsedTime);
-                        ++it;
+                        it++;
                     }
                 }
                 
@@ -419,7 +413,7 @@ int main(int argc, const char * argv[])
                     {
                         b->render(b->position.x, b->position.y, NULL, renderer);
                         b->updatePosition(elapsedTime);
-                        ++it;
+                        it++;
                     }
                 }
                 
@@ -441,7 +435,7 @@ int main(int argc, const char * argv[])
                     {
                         b->render(b->position.x, b->position.y, NULL, renderer);
                         b->updatePosition(elapsedTime);
-                        ++it;
+                        it++;
                     }
                 }
                 
@@ -488,8 +482,8 @@ int main(int argc, const char * argv[])
                             tempBullet->setPosition(position);
                             leader1EntityBullets.push_back(tempBullet);
                         }
-                        ++counter;
-                        ++it;
+                        counter++;
+                        it++;
                     }
                     else
                     {
@@ -529,8 +523,8 @@ int main(int argc, const char * argv[])
                             tempBullet->setPosition(position);
                             leader2EntityBullets.push_back(tempBullet);
                         }
-                        ++counter;
-                        ++it;
+                        counter++;
+                        it++;
                     }
                     else
                     {
@@ -570,6 +564,8 @@ int main(int argc, const char * argv[])
                     Bullet* tempBullet = new Bullet(position, leader1->angle, leader1->bulletType + "_" + to_string(leader1->bulletLevel));
                     tempBullet->loadFromFile(BULLET_DIR + leader1->bulletType + "_" + to_string(leader1->bulletLevel) + ".png", renderer);
                     tempBullet->setPosition(position);
+                    tempBullet->setInitialSpeed(leader1->speed);
+                    tempBullet->setAcceleration(leader1->acceleration);
                     leader1Bullets.push_back(tempBullet);
                     --leader1->numBulletsPerPress;
                 }
@@ -617,6 +613,8 @@ int main(int argc, const char * argv[])
                     Bullet* tempBullet = new Bullet(position, leader2->angle, leader2->bulletType + "_" + to_string(leader2->bulletLevel));
                     tempBullet->loadFromFile(BULLET_DIR + leader2->bulletType + "_" + to_string(leader2->bulletLevel) + ".png", renderer);
                     tempBullet->setPosition(position);
+                    tempBullet->setInitialSpeed(leader2->speed);
+                    tempBullet->setAcceleration(leader2->acceleration);
                     leader2Bullets.push_back(tempBullet);
                     --leader2->numBulletsPerPress;
                 }
@@ -644,61 +642,68 @@ int main(int argc, const char * argv[])
             }
             else
             {
-                if (KEYS[SDL_SCANCODE_UP] && notpress)
+                if (KEYS[SDL_SCANCODE_UP] && notPressed)
                 {
-                    presstick = currentFrameTime;
+                    pressTick = currentFrameTime;
                     it.rightmovement(1);
-                    notpress = false;
+                    notPressed = false;
                 }
-                else if (KEYS[SDL_SCANCODE_DOWN] && notpress)
+                else if (KEYS[SDL_SCANCODE_DOWN] && notPressed)
                 {
-                    presstick = currentFrameTime;
+                    pressTick = currentFrameTime;
                     it.rightmovement(-1);
-                    notpress = false;
+                    notPressed = false;
                 }
-                else if (KEYS[SDL_SCANCODE_W] && notpress)
+                else if (KEYS[SDL_SCANCODE_W] && notPressed)
                 {
-                    presstick = currentFrameTime;
+                    pressTick = currentFrameTime;
                     it.leftmovement(1);
-                    notpress = false;
+                    notPressed = false;
                 }
-                else if (KEYS[SDL_SCANCODE_S] && notpress)
+                else if (KEYS[SDL_SCANCODE_S] && notPressed)
                 {
-                    presstick = currentFrameTime;
+                    pressTick = currentFrameTime;
                     it.leftmovement(-1);
-                    notpress = false;
+                    notPressed = false;
                 }
-                else if (KEYS[SDL_SCANCODE_SPACE] && notpress)
+                else if (KEYS[SDL_SCANCODE_SPACE] && notPressed)
                 {
-                    presstick = currentFrameTime;
+                    pressTick = currentFrameTime;
                     it.click(gameOver, 2, ACTUAL_WINDOW_WIDTH, ACTUAL_WINDOW_HEIGHT,CHOOSEPLANE_PATH, INSTRUCTION_PATH,renderer);
-                    notpress = false;
+                    notPressed = false;
                 }
-                else if (KEYS[SDL_SCANCODE_LSHIFT] && notpress)
+                else if (KEYS[SDL_SCANCODE_LSHIFT] && notPressed)
                 {
-                    presstick = currentFrameTime;
+                    pressTick = currentFrameTime;
                     it.click(gameOver, 1, ACTUAL_WINDOW_WIDTH, ACTUAL_WINDOW_HEIGHT,CHOOSEPLANE_PATH, INSTRUCTION_PATH, renderer);
-                    notpress = false;
+                    notPressed = false;
                 }
-                else if (KEYS[SDL_SCANCODE_A] && notpress)
+                else if (KEYS[SDL_SCANCODE_A] && notPressed)
                 {
-                    presstick = currentFrameTime;
+                    pressTick = currentFrameTime;
                     it.back(ACTUAL_WINDOW_WIDTH,ACTUAL_WINDOW_HEIGHT,INTERFACE_PATH, renderer);
-                    notpress = false;
+                    notPressed = false;
                 }
-                else if (KEYS[SDL_SCANCODE_LEFT] && notpress)
+                else if (KEYS[SDL_SCANCODE_LEFT] && notPressed)
                 {
-                    presstick = currentFrameTime;
+                    pressTick = currentFrameTime;
                     it.back(ACTUAL_WINDOW_WIDTH,ACTUAL_WINDOW_HEIGHT,INTERFACE_PATH, renderer);
-                    notpress = false;
+                    notPressed = false;
                 }
-                else if (currentFrameTime - presstick > 0.2)
+                else if (currentFrameTime - pressTick > 0.2)
                 {
-                    notpress = true;
+                    notPressed = true;
                 }
                 
                 if (it.finishChoosing())
                 {
+                    
+                    Vector2 leader1_init_position = generate_random_position(0, ACTUAL_WINDOW_WIDTH/3, 0, ACTUAL_WINDOW_HEIGHT/2);
+                    leader1 = new Leader(leader1_init_position, 0, ACTUAL_WINDOW_WIDTH, 0, ACTUAL_WINDOW_HEIGHT);
+                    
+                    Vector2 leader2_init_position = generate_random_position(ACTUAL_WINDOW_WIDTH/2, ACTUAL_WINDOW_WIDTH*2/3, 0, ACTUAL_WINDOW_HEIGHT/3);
+                    leader2 = new Leader(leader2_init_position, 0, ACTUAL_WINDOW_WIDTH, 0, ACTUAL_WINDOW_HEIGHT);
+                    
                     int leftIndex  = it.leftType - 1;
                     int rightIndex = it.rightType - 1;
                     
@@ -719,7 +724,7 @@ int main(int argc, const char * argv[])
                     leader1->setFullHealth(it.healthArray[rightIndex]);
                     leader1->setAngle(0);
                     leader1->setMaxEntityNumber(10);
-                    leader1->setAmmunitionThreshold(30);
+                    leader1->setAmmunitionThreshold(10);
                     
                     // Set attributes for player 2
                     leader2->setPlaneType(it.rightTypeArray[rightIndex]);
@@ -738,7 +743,7 @@ int main(int argc, const char * argv[])
                     leader2->setFullHealth(it.healthArray[rightIndex]);
                     leader2->setAngle(180);
                     leader2->setMaxEntityNumber(10);
-                    leader2->setAmmunitionThreshold(30);
+                    leader2->setAmmunitionThreshold(10);
                 }
                 
                 
@@ -791,11 +796,11 @@ bool init()
             }
             ACTUAL_WINDOW_WIDTH  = WINDOW_WIDTH;
             ACTUAL_WINDOW_HEIGHT = WINDOW_HEIGHT;
-            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-            SDL_DisplayMode display_mode;
-            SDL_GetCurrentDisplayMode(0, &display_mode);
-            ACTUAL_WINDOW_WIDTH = display_mode.w;
-            ACTUAL_WINDOW_HEIGHT = display_mode.h;
+//            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+//            SDL_DisplayMode display_mode;
+//            SDL_GetCurrentDisplayMode(0, &display_mode);
+//            ACTUAL_WINDOW_WIDTH = display_mode.w;
+//            ACTUAL_WINDOW_HEIGHT = display_mode.h;
         }
         else
         {
@@ -814,49 +819,55 @@ void close()
     for (Entity* e : leader1Entities)
     {
         delete e;
-        e = NULL;
+        e = nullptr;
     }
     
     for (Entity* e : leader2Entities)
     {
         delete e;
-        e = NULL;
+        e = nullptr;
     }
     
     for (Bullet* b : leader1Bullets)
     {
         delete b;
-        b = NULL;
+        b = nullptr;
     }
     
     for (Bullet* b : leader1EntityBullets)
     {
         delete b;
-        b = NULL;
+        b = nullptr;
     }
     
     for (Bullet* b : leader2EntityBullets)
     {
         delete b;
-        b = NULL;
+        b = nullptr;
     }
     
     for (BonusEntity* b :bonus_entity_objects)
     {
         delete b;
-        b = NULL;
+        b = nullptr;
     }
     
     for (BonusBulletEnhance* b : bonus_bullet_enhance_objects)
     {
         delete b;
-        b = NULL;
+        b = nullptr;
     }
     
     for (BonusBulletAmmunition* b : bonus_bullet_ammunition_objects)
     {
         delete b;
-        b = NULL;
+        b = nullptr;
+    }
+    
+    for (Gravity* g : gravity_objects)
+    {
+        delete g;
+        g = nullptr;
     }
     
     delete leader1;
@@ -870,8 +881,8 @@ void close()
     // Destroy window
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-    window = NULL;
-    renderer = NULL;
+    window =  nullptr;
+    renderer = nullptr;
     
     // Quit SDL environment
     IMG_Quit();

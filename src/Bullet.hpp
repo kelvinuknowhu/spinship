@@ -24,6 +24,8 @@ public:
     Vector2 acceleration = Vector2(0,0);
     Vector2 maxSpeed= Vector2(0,0);
     float velocityAngle = 0;
+    float defaultSpeed = 500;
+    float defaultAcceleration = 250;
     
     
     
@@ -32,17 +34,47 @@ public:
         this->position = _pos;
         this->angle = _angle + 90;
         this->velocityAngle = _angle;
-        this->velocity.x = 250 * cos(angleToRadian(velocityAngle));
-        this->velocity.y = 250 * sin(angleToRadian(velocityAngle));
-        this->acceleration = velocity;
+        this->velocity.x = defaultSpeed * cos(angleToRadian(velocityAngle));
+        this->velocity.y = defaultSpeed * sin(angleToRadian(velocityAngle));
+        this->acceleration.x = defaultAcceleration * cos(angleToRadian(velocityAngle));
+        this->acceleration.y = defaultAcceleration * sin(angleToRadian(velocityAngle));
         this->maxSpeed = Vector2(1500, 1500);
         this->bulletName = _name;
     }
     
     void setPosition(Vector2 _pos)
     {
-        this->position.x = position.x;
-        this->position.y = position.y - getActualHeight()/2;
+        position.x = position.x;
+        position.y = position.y - getActualHeight()/2;
+    }
+    
+    void setInitialSpeed(float _speed)
+    {
+        float speedDesired = 2 * _speed;
+        if (speedDesired > defaultSpeed)
+        {
+            velocity.x = speedDesired * cos(angleToRadian(velocityAngle));
+            velocity.y = speedDesired * sin(angleToRadian(velocityAngle));
+        }
+    }
+    
+    void setAcceleration(float _num)
+    {
+        if (_num > defaultAcceleration)
+        {
+            acceleration.x = _num * cos(angleToRadian(velocityAngle));
+            acceleration.y = _num * sin(angleToRadian(velocityAngle));
+        }
+    }
+    
+    void setAngle(float _angle)
+    {
+        angle = _angle;
+    }
+    
+    void setVelocityAngle(float angle)
+    {
+        velocityAngle = angle - 90;
     }
     
     void updatePosition(float ticks)
@@ -62,15 +94,7 @@ public:
         return false;
     }
     
-    void setAngle(float angle)
-    {
-        this->angle = angle;
-    }
     
-    void setVelocityAngle(float angle)
-    {
-        this->velocityAngle = angle - 90;
-    }
     
     
 };

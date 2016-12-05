@@ -40,7 +40,6 @@ public:
         this->gravity_level = 10 * size;
         this->angle_coefficient = PI / 180.0f;
         this->angle = 0;
-        this->center = position;
         this->distance_discount = 30;
         this->distance_tolerance = 10; 
     }
