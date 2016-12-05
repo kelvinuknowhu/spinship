@@ -77,6 +77,13 @@ public:
         if (speed < 0)
             speed = 0;
     }
+    
+    void halveAmmunition()
+    {
+        maxNumBulletsPerPress =  maxNumBulletsPerPress / 2;
+        if (maxNumBulletsPerPress < 1)
+            maxNumBulletsPerPress = 1;
+    }
 
 
     void updatePosition(float ticks)
@@ -161,6 +168,11 @@ public:
     {
         if (numEntities > 0)
             avgRotation = 360 / numEntities;
+    }
+    
+    void updateAmmunitionCounter(float _ticks)
+    {
+        ammunitionCounter += _ticks;
     }
     
     
@@ -265,9 +277,7 @@ public:
         }
         
         if (health <= 0)
-        {
             health = 0;
-        }
     }
     
     void gainHealth(std::string _type)

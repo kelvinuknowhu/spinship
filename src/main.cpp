@@ -26,6 +26,8 @@
 #include "BonusEntity.hpp"
 #include "BonusBulletEnhance.hpp"
 #include "BonusBulletAmmunition.hpp"
+#include "Gravity.hpp"
+#include "Interface.hpp"
 
 
 
@@ -33,7 +35,7 @@
 #define WINDOW_HEIGHT 900
 int ACTUAL_WINDOW_WIDTH = 0;
 int ACTUAL_WINDOW_HEIGHT = 0;
-const int HEALTH_BAR_HEIGHT = 20;
+const int HEALTH_BAR_HEIGHT = 40;
 
 using namespace std;
 
@@ -49,13 +51,22 @@ const string BULLET_DIR  = BASE_DIR + "img/laser-bullet/";
 const string BONUS_DIR = BASE_DIR + "img/bonus/";
 const string HEALTH_BAR_DIR = BASE_DIR + "img/health-bar/";
 const string BACKGROUND_PATH = BASE_DIR + "img/background/purple.png";
-const string BLACK_HOLE_PATH = BASE_DIR + "img/black-hole/blackHole.png";
+const string GRAVITY_PATH = BASE_DIR + "img/black-hole/meteor.png";
+
+const string INTERFACE_PATH = BASE_DIR + "img/interface/interface_1.png";
+const string LIGHTBEAM_PATH = BASE_DIR + "img/interface/lightBeam.png";
+const string LIGHTBEAM_PATH_REVERSE = BASE_DIR + "img/interface/lightBeam_hor.png";
+const string CHOOSEPLANE_PATH = BASE_DIR + "img/interface/choosePlane.png";
+const string WORD_PATH = BASE_DIR + "img/interface/word.png";
+const string INSTRUCTION_PATH = BASE_DIR + "img/interface/instruction.png";
 
 Leader* leader1;
 Leader* leader2;
 
 HealthBar* leader1HealthBar;
 HealthBar* leader2HealthBar;
+LTexture* leader1HealthBarFrame;
+LTexture* leader2HealthBarFrame;
 
 vector<Entity*> leader1Entities;
 vector<Entity*> leader2Entities;
@@ -68,6 +79,8 @@ vector<Bullet*> leader2EntityBullets;
 vector<BonusEntity*> bonus_entity_objects;
 vector<BonusBulletEnhance*> bonus_bullet_enhance_objects;
 vector<BonusBulletAmmunition*> bonus_bullet_ammunition_objects;
+
+
 
 
 bool init();
@@ -86,51 +99,21 @@ int main(int argc, const char * argv[])
     }
     else
     {
+        
+        Vector2 interface_init_position(0, 0);
+        Interface it(interface_init_position, WORD_PATH);
+        it.loadFromFile(INTERFACE_PATH, renderer);
+        it.setActualWidth(ACTUAL_WINDOW_WIDTH);
+        it.setActualHeight(ACTUAL_WINDOW_HEIGHT);
+        it.update(LIGHTBEAM_PATH, LIGHTBEAM_PATH_REVERSE, renderer);
+        
+        
         Vector2 leader1_init_position = generate_random_position(0, ACTUAL_WINDOW_WIDTH/3, 0, ACTUAL_WINDOW_HEIGHT/2);
         leader1 = new Leader(leader1_init_position, 0, ACTUAL_WINDOW_WIDTH, 0, ACTUAL_WINDOW_HEIGHT);
-        leader1->setPlaneType("playerShip1_red");
-        leader1->setBulletType("laserRed");
-        leader1->setBulletLevel(1);
-        leader1->loadFromFile(LEADER_DIR + leader1->planeType + ".png", renderer);
-        leader1->setInitialSpeed(100);
-        leader1->setMaxSpeed(750);
-        leader1->setAngle(180);
-        leader1->setAcceleration(200);
-        leader1->setDeacceleration(600);
-        leader1->setFriction(0);
-        leader1->setMaxEntityNumber(10);
-        leader1->setMaxNumBulletsPerPress(15);
-        leader1->setFullHealth(100);
-        
-        Vector2 leader1HealthBar_init_position = Vector2(0, 0);
-        leader1HealthBar = new HealthBar(leader1HealthBar_init_position, leader1->fullHealth);
-        leader1HealthBar->loadFromFile(HEALTH_BAR_DIR + "healthBar_left.png", renderer);
-        leader1HealthBar->setActualWidth(ACTUAL_WINDOW_WIDTH/2 - 10);
-        leader1HealthBar->setActualHeight(HEALTH_BAR_HEIGHT);
-        leader1HealthBar->setClipDimensions(0, 0, leader1HealthBar->getActualWidth(), leader1HealthBar->getActualHeight());
         
         Vector2 leader2_init_position = generate_random_position(ACTUAL_WINDOW_WIDTH/2, ACTUAL_WINDOW_WIDTH*2/3, 0, ACTUAL_WINDOW_HEIGHT/3);
         leader2 = new Leader(leader2_init_position, 0, ACTUAL_WINDOW_WIDTH, 0, ACTUAL_WINDOW_HEIGHT);
-        leader2->setPlaneType("playerShip3_green");
-        leader2->setBulletType("laserGreen");
-        leader2->setBulletLevel(1);
-        leader2->loadFromFile(LEADER_DIR + leader2->planeType + ".png", renderer);
-        leader2->setInitialSpeed(100);
-        leader2->setMaxSpeed(500);
-        leader2->setAngle(0);
-        leader2->setAcceleration(100);
-        leader2->setDeacceleration(300);
-        leader2->setFriction(0);
-        leader2->setMaxEntityNumber(10);
-        leader2->setMaxNumBulletsPerPress(10);
-        leader2->setFullHealth(100);
         
-        Vector2 leader2HealthBar_init_position = Vector2(ACTUAL_WINDOW_WIDTH/2 + 10, 0);
-        leader2HealthBar = new HealthBar(leader2HealthBar_init_position, leader2->fullHealth);
-        leader2HealthBar->loadFromFile(HEALTH_BAR_DIR + "healthBar_right.png", renderer);
-        leader2HealthBar->setActualWidth(ACTUAL_WINDOW_WIDTH/2 - 10);
-        leader2HealthBar->setActualHeight(HEALTH_BAR_HEIGHT);
-        leader2HealthBar->setClipDimensions(0, 0, leader2HealthBar->getActualWidth(), leader2HealthBar->getActualHeight());
         
         LTexture background(1);
         background.loadFromFile(BACKGROUND_PATH, renderer);
@@ -141,14 +124,53 @@ int main(int argc, const char * argv[])
         BonusBulletEnhance::setGlobalThreshold(1);
         BonusBulletEnhance::setMaxNumObjects(1);
         
+        Vector2 gravity_position = generate_random_position(0, ACTUAL_WINDOW_WIDTH - 150, 0, ACTUAL_WINDOW_HEIGHT - 150);
+        Gravity gravity(gravity_position, 1);
+        gravity.loadFromFile(GRAVITY_PATH, renderer);
+        gravity.setActualWidth(150);
+        gravity.setActualHeight(150);
+        gravity.updateCenter();
+        
+        
+        
         
         float currentFrameTime = 0;
         float previousFrameTime = 0;
         float elapsedTime = 0;
 
+        bool notpress = true;
+        float presstick = 0;
+        
+        
         SDL_Event event;
         bool done = false;
-        bool gameOver = false;
+        bool gameOver = true;
+        
+        
+        Vector2 leader1HealthBar_init_position(0, 10);
+        leader1HealthBar = new HealthBar(leader1HealthBar_init_position, leader1->fullHealth);
+        leader1HealthBar->loadFromFile(HEALTH_BAR_DIR + "healthBar_left.png", renderer);
+        leader1HealthBar->setActualWidth(ACTUAL_WINDOW_WIDTH/2 - 10);
+        leader1HealthBar->setActualHeight(HEALTH_BAR_HEIGHT);
+        leader1HealthBar->setClipDimensions(0, 0, leader1HealthBar->getActualWidth(), leader1HealthBar->getActualHeight());
+        
+        Vector2 leader2HealthBar_init_position(ACTUAL_WINDOW_WIDTH/2 + 10, 10);
+        leader2HealthBar = new HealthBar(leader2HealthBar_init_position, leader2->fullHealth);
+        leader2HealthBar->loadFromFile(HEALTH_BAR_DIR + "healthBar_right.png", renderer);
+        leader2HealthBar->setActualWidth(ACTUAL_WINDOW_WIDTH/2 - 10);
+        leader2HealthBar->setActualHeight(HEALTH_BAR_HEIGHT);
+        leader2HealthBar->setClipDimensions(0, 0, leader2HealthBar->getActualWidth(), leader2HealthBar->getActualHeight());
+        
+        leader1HealthBarFrame = new LTexture(1);
+        leader1HealthBarFrame->loadFromFile(HEALTH_BAR_DIR + "healthBarFrame.png", renderer);
+        leader1HealthBarFrame->setActualWidth(ACTUAL_WINDOW_WIDTH/2 - 10);
+        leader1HealthBarFrame->setActualHeight(HEALTH_BAR_HEIGHT);
+        
+        leader2HealthBarFrame = new LTexture(1);
+        leader2HealthBarFrame->loadFromFile(HEALTH_BAR_DIR + "healthBarFrame.png", renderer);
+        leader2HealthBarFrame->setActualWidth(ACTUAL_WINDOW_WIDTH/2 - 10);
+        leader2HealthBarFrame->setActualHeight(HEALTH_BAR_HEIGHT);
+        
         while (!done)
         {
             while (SDL_PollEvent(&event))
@@ -163,11 +185,17 @@ int main(int argc, const char * argv[])
             elapsedTime = currentFrameTime - previousFrameTime;
             previousFrameTime = currentFrameTime;
             
+    
             if (!gameOver)
             {
-                
+       
                 // Draw the background
                 background.render(0, 0, NULL, renderer);
+                
+                gravity.render(gravity.position.x, gravity.position.y, NULL, renderer);
+                gravity.update(elapsedTime);
+                gravity.update(leader1, elapsedTime);
+                gravity.update(leader2, elapsedTime);
                 
                 BonusEntity::globalCounter = currentFrameTime - BonusEntity::globalPrevious;
                 if (bonus_entity_objects.size() >= BonusEntity::maxNumObjects)
@@ -471,7 +499,6 @@ int main(int argc, const char * argv[])
                     }
                 }
                 
-                
                 // Draw and update position of the second player's entities
                 counter = 0;
                 for (vector<Entity*>::iterator it = leader2Entities.begin(); it != leader2Entities.end();)
@@ -512,11 +539,11 @@ int main(int argc, const char * argv[])
                         delete e;
                     }
                 }
-   
-                
-                
+
                 // Leader 1 Controller
                 leader1->updatePosition(elapsedTime);
+                leader1->updateAmmunitionCounter(elapsedTime);
+                leader1->speedDown(elapsedTime);
                 if (KEYS[SDL_SCANCODE_W]) {
                     leader1->updateSpeed(1, elapsedTime);
                 }
@@ -552,9 +579,18 @@ int main(int argc, const char * argv[])
                     leader1->numBulletsPerPress = leader1->maxNumBulletsPerPress;
                 }
                 
+                if (leader1->ammunitionCounter > leader1->ammunitionThreshold)
+                {
+                    leader1->halveAmmunition();
+                    leader1->ammunitionCounter = 0;
+                }
+                
+                
 
                 // Leader 2 Controller
                 leader2->updatePosition(elapsedTime);
+                leader2->speedDown(elapsedTime);
+                leader2->updateAmmunitionCounter(elapsedTime);
                 if (KEYS[SDL_SCANCODE_UP]) {
                     leader2->updateSpeed(1, elapsedTime);
                 }
@@ -590,6 +626,11 @@ int main(int argc, const char * argv[])
                     leader2->numBulletsPerPress = leader2->maxNumBulletsPerPress;
                 }
                 
+                if (leader2->ammunitionCounter > leader2->ammunitionThreshold)
+                {
+                    leader2->halveAmmunition();
+                    leader2->ammunitionCounter = 0;
+                }
                 
                 // Draw the health bars for both players
                 leader1HealthBar->render(leader1HealthBar->position.x, leader1HealthBar->position.y, &leader1HealthBar->rect, renderer);
@@ -597,10 +638,114 @@ int main(int argc, const char * argv[])
                 leader2HealthBar->render(leader2HealthBar->position.x + (1 - leader2->health/leader2->fullHealth) * leader2HealthBar->getActualWidth(), leader2HealthBar->position.y, &leader2HealthBar->rect, renderer);
                 leader2HealthBar->updateHealthBarLength(leader2->health/leader2->fullHealth, "right");
               
+                
+                leader1HealthBarFrame->render(leader1HealthBar->position.x, leader1HealthBar->position.y, NULL, renderer);
+                leader2HealthBarFrame->render(leader2HealthBar->position.x, leader2HealthBar->position.y, NULL, renderer);
             }
-            
-            SDL_RenderPresent(renderer);
+            else
+            {
+                if (KEYS[SDL_SCANCODE_UP] && notpress)
+                {
+                    presstick = currentFrameTime;
+                    it.rightmovement(1);
+                    notpress = false;
+                }
+                else if (KEYS[SDL_SCANCODE_DOWN] && notpress)
+                {
+                    presstick = currentFrameTime;
+                    it.rightmovement(-1);
+                    notpress = false;
+                }
+                else if (KEYS[SDL_SCANCODE_W] && notpress)
+                {
+                    presstick = currentFrameTime;
+                    it.leftmovement(1);
+                    notpress = false;
+                }
+                else if (KEYS[SDL_SCANCODE_S] && notpress)
+                {
+                    presstick = currentFrameTime;
+                    it.leftmovement(-1);
+                    notpress = false;
+                }
+                else if (KEYS[SDL_SCANCODE_SPACE] && notpress)
+                {
+                    presstick = currentFrameTime;
+                    it.click(gameOver, 2, ACTUAL_WINDOW_WIDTH, ACTUAL_WINDOW_HEIGHT,CHOOSEPLANE_PATH, INSTRUCTION_PATH,renderer);
+                    notpress = false;
+                }
+                else if (KEYS[SDL_SCANCODE_LSHIFT] && notpress)
+                {
+                    presstick = currentFrameTime;
+                    it.click(gameOver, 1, ACTUAL_WINDOW_WIDTH, ACTUAL_WINDOW_HEIGHT,CHOOSEPLANE_PATH, INSTRUCTION_PATH, renderer);
+                    notpress = false;
+                }
+                else if (KEYS[SDL_SCANCODE_A] && notpress)
+                {
+                    presstick = currentFrameTime;
+                    it.back(ACTUAL_WINDOW_WIDTH,ACTUAL_WINDOW_HEIGHT,INTERFACE_PATH, renderer);
+                    notpress = false;
+                }
+                else if (KEYS[SDL_SCANCODE_LEFT] && notpress)
+                {
+                    presstick = currentFrameTime;
+                    it.back(ACTUAL_WINDOW_WIDTH,ACTUAL_WINDOW_HEIGHT,INTERFACE_PATH, renderer);
+                    notpress = false;
+                }
+                else if (currentFrameTime - presstick > 0.2)
+                {
+                    notpress = true;
+                }
+                
+                if (it.finishChoosing())
+                {
+                    int leftIndex  = it.leftType - 1;
+                    int rightIndex = it.rightType - 1;
+                    
+                    // Set attributes for player 1
+                    leader1->setPlaneType(it.leftTypeArray[leftIndex]);
+                    leader1->loadFromFile(LEADER_DIR + leader1->planeType + ".png", renderer);
+                    
+                    leader1->setInitialSpeed(it.initialSpeedArray[rightIndex]);
+                    leader1->setMaxSpeed(it.maxSpeedArray[rightIndex]);
+                    leader1->setAcceleration(it.accelerationArray[rightIndex]);
+                    leader1->setDeacceleration(it.deaccelerationArray[rightIndex]);
+                    leader1->setFriction(it.frictionArray[rightIndex]);
+                    
+                    leader1->setBulletLevel(1);
+                    leader1->setBulletType(it.leftBulletArray[leftIndex]);
+                    leader1->setMaxNumBulletsPerPress(it.powerArray[rightIndex]);
+                    
+                    leader1->setFullHealth(it.healthArray[rightIndex]);
+                    leader1->setAngle(0);
+                    leader1->setMaxEntityNumber(10);
+                    leader1->setAmmunitionThreshold(30);
+                    
+                    // Set attributes for player 2
+                    leader2->setPlaneType(it.rightTypeArray[rightIndex]);
+                    leader2->loadFromFile(LEADER_DIR + leader2->planeType + ".png", renderer);
 
+                    leader2->setInitialSpeed(it.initialSpeedArray[rightIndex]);
+                    leader2->setMaxSpeed(it.maxSpeedArray[rightIndex]);
+                    leader2->setAcceleration(it.accelerationArray[rightIndex]);
+                    leader2->setDeacceleration(it.deaccelerationArray[rightIndex]);
+                    leader2->setFriction(it.frictionArray[rightIndex]);
+
+                    leader2->setBulletLevel(1);
+                    leader2->setBulletType(it.rightBulletArray[rightIndex]);
+                    leader2->setMaxNumBulletsPerPress(it.powerArray[rightIndex]);
+
+                    leader2->setFullHealth(it.healthArray[rightIndex]);
+                    leader2->setAngle(180);
+                    leader2->setMaxEntityNumber(10);
+                    leader2->setAmmunitionThreshold(30);
+                }
+                
+                
+                it.render(it.position.x, it.position.y, NULL, renderer);
+                it.updateLine(elapsedTime, renderer);
+            }
+            SDL_RenderPresent(renderer);
         }
     
     }
@@ -651,7 +796,6 @@ bool init()
             SDL_GetCurrentDisplayMode(0, &display_mode);
             ACTUAL_WINDOW_WIDTH = display_mode.w;
             ACTUAL_WINDOW_HEIGHT = display_mode.h;
-            cout << ACTUAL_WINDOW_WIDTH << ", " << ACTUAL_WINDOW_HEIGHT << endl;
         }
         else
         {
@@ -667,17 +811,11 @@ bool init()
 void close()
 {
     
-    delete leader1;
-    leader1 = NULL;
-    
     for (Entity* e : leader1Entities)
     {
         delete e;
         e = NULL;
     }
-    
-    delete leader2;
-    leader2 = NULL;
     
     for (Entity* e : leader2Entities)
     {
@@ -721,6 +859,13 @@ void close()
         b = NULL;
     }
     
+    delete leader1;
+    delete leader2;
+    delete leader1HealthBar;
+    delete leader2HealthBar;
+    delete leader1HealthBarFrame;
+    delete leader2HealthBarFrame;
+
     
     // Destroy window
     SDL_DestroyRenderer(renderer);
@@ -734,7 +879,8 @@ void close()
 
 }
 
-void enable2D(int width, int height) {
+void enable2D(int width, int height)
+{
     // Set the viewport within the window in pixels
     glViewport(0, 0, width, height);
     

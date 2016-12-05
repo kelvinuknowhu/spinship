@@ -16,11 +16,13 @@
 		B6963D4C1DEEDCCB00EE33CC /* Leader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6963D431DEEDCCB00EE33CC /* Leader.cpp */; };
 		B6963D4D1DEEDCCB00EE33CC /* LTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6963D451DEEDCCB00EE33CC /* LTexture.cpp */; };
 		B6963D4E1DEEDCCB00EE33CC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6963D471DEEDCCB00EE33CC /* main.cpp */; };
-		B6963D4F1DEEDCCB00EE33CC /* Vector2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6963D481DEEDCCB00EE33CC /* Vector2.cpp */; };
 		B69F68B71DF04C470053F066 /* Bonus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B69F68B51DF04C470053F066 /* Bonus.cpp */; };
 		B6B210541DF3F512003B70DC /* HealthBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6B210521DF3F512003B70DC /* HealthBar.cpp */; };
 		B6B210571DF44EE6003B70DC /* BonusBulletEnhance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6B210551DF44EE6003B70DC /* BonusBulletEnhance.cpp */; };
 		B6B2105A1DF45DC1003B70DC /* BonusBulletAmmunition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6B210581DF45DC1003B70DC /* BonusBulletAmmunition.cpp */; };
+		B6B2105D1DF46953003B70DC /* Gravity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6B2105B1DF46953003B70DC /* Gravity.cpp */; };
+		B6B210601DF46F08003B70DC /* Interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6B2105E1DF46F08003B70DC /* Interface.cpp */; };
+		B6B210631DF46F32003B70DC /* Line.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6B210611DF46F32003B70DC /* Line.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -52,7 +54,6 @@
 		B6963D451DEEDCCB00EE33CC /* LTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LTexture.cpp; sourceTree = "<group>"; };
 		B6963D461DEEDCCB00EE33CC /* LTexture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LTexture.hpp; sourceTree = "<group>"; };
 		B6963D471DEEDCCB00EE33CC /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		B6963D481DEEDCCB00EE33CC /* Vector2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vector2.cpp; sourceTree = "<group>"; };
 		B6963D491DEEDCCB00EE33CC /* Vector2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Vector2.hpp; sourceTree = "<group>"; };
 		B69F68B51DF04C470053F066 /* Bonus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bonus.cpp; sourceTree = "<group>"; };
 		B69F68B61DF04C470053F066 /* Bonus.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Bonus.hpp; sourceTree = "<group>"; };
@@ -62,6 +63,12 @@
 		B6B210561DF44EE6003B70DC /* BonusBulletEnhance.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BonusBulletEnhance.hpp; sourceTree = "<group>"; };
 		B6B210581DF45DC1003B70DC /* BonusBulletAmmunition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BonusBulletAmmunition.cpp; sourceTree = "<group>"; };
 		B6B210591DF45DC1003B70DC /* BonusBulletAmmunition.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BonusBulletAmmunition.hpp; sourceTree = "<group>"; };
+		B6B2105B1DF46953003B70DC /* Gravity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Gravity.cpp; sourceTree = "<group>"; };
+		B6B2105C1DF46953003B70DC /* Gravity.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Gravity.hpp; sourceTree = "<group>"; };
+		B6B2105E1DF46F08003B70DC /* Interface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interface.cpp; sourceTree = "<group>"; };
+		B6B2105F1DF46F08003B70DC /* Interface.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Interface.hpp; sourceTree = "<group>"; };
+		B6B210611DF46F32003B70DC /* Line.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Line.cpp; sourceTree = "<group>"; };
+		B6B210621DF46F32003B70DC /* Line.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Line.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				B68FC8311DF1A6A700598052 /* Utility.h */,
+				B6963D491DEEDCCB00EE33CC /* Vector2.hpp */,
 				B6963D451DEEDCCB00EE33CC /* LTexture.cpp */,
 				B6963D461DEEDCCB00EE33CC /* LTexture.hpp */,
 				B6963D3F1DEEDCCB00EE33CC /* Bullet.cpp */,
@@ -120,8 +128,8 @@
 				B6963D441DEEDCCB00EE33CC /* Leader.hpp */,
 				B6B210521DF3F512003B70DC /* HealthBar.cpp */,
 				B6B210531DF3F512003B70DC /* HealthBar.hpp */,
-				B6963D481DEEDCCB00EE33CC /* Vector2.cpp */,
-				B6963D491DEEDCCB00EE33CC /* Vector2.hpp */,
+				B6B2105B1DF46953003B70DC /* Gravity.cpp */,
+				B6B2105C1DF46953003B70DC /* Gravity.hpp */,
 				B69F68B51DF04C470053F066 /* Bonus.cpp */,
 				B69F68B61DF04C470053F066 /* Bonus.hpp */,
 				B68FC8351DF2A0E500598052 /* BonusEntity.cpp */,
@@ -130,6 +138,10 @@
 				B6B210561DF44EE6003B70DC /* BonusBulletEnhance.hpp */,
 				B6B210581DF45DC1003B70DC /* BonusBulletAmmunition.cpp */,
 				B6B210591DF45DC1003B70DC /* BonusBulletAmmunition.hpp */,
+				B6B2105E1DF46F08003B70DC /* Interface.cpp */,
+				B6B2105F1DF46F08003B70DC /* Interface.hpp */,
+				B6B210611DF46F32003B70DC /* Line.cpp */,
+				B6B210621DF46F32003B70DC /* Line.hpp */,
 				B6963D471DEEDCCB00EE33CC /* main.cpp */,
 			);
 			path = src;
@@ -192,8 +204,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6963D4C1DEEDCCB00EE33CC /* Leader.cpp in Sources */,
+				B6B210631DF46F32003B70DC /* Line.cpp in Sources */,
 				B6B210541DF3F512003B70DC /* HealthBar.cpp in Sources */,
-				B6963D4F1DEEDCCB00EE33CC /* Vector2.cpp in Sources */,
+				B6B2105D1DF46953003B70DC /* Gravity.cpp in Sources */,
+				B6B210601DF46F08003B70DC /* Interface.cpp in Sources */,
 				B69F68B71DF04C470053F066 /* Bonus.cpp in Sources */,
 				B6963D4B1DEEDCCB00EE33CC /* Entity.cpp in Sources */,
 				B68FC8371DF2A0E500598052 /* BonusEntity.cpp in Sources */,
