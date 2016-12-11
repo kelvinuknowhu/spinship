@@ -9,7 +9,7 @@
  |     Instructor:  John Sterling
  |
  +-----------------------------------------------------------------------------
- |    Description:
+ |    Description: An adorable astral arcade game that you will love to play!
  |
  *===========================================================================*/
 
@@ -81,7 +81,7 @@ vector<BonusBulletEnhance*> bonus_bullet_enhance_objects;
 vector<BonusBulletAmmunition*> bonus_bullet_ammunition_objects;
 
 vector<Gravity*> gravity_objects;
-const int NUM_GRAVITY_OBJECTS = 3;
+const int NUM_GRAVITY_OBJECTS = 2;
 
 
 bool init();
