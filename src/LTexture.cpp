@@ -115,7 +115,45 @@ void LTexture::render(int x, int y, SDL_Rect* clip, SDL_Renderer* renderer, SDL_
     SDL_RenderCopyEx(renderer, texture, clip, &renderQuad, this->angle, center, flip);
 }
 
+int LTexture::getTextureWidth()
+{
+    return textureWidth;
+}
 
+int LTexture::getTextureHeight()
+{
+    return textureHeight;
+}
+
+int LTexture::getActualWidth()
+{
+    return actualWidth;
+}
+
+int LTexture::getActualHeight()
+{
+    return actualHeight;
+}
+
+void LTexture::setActualWidth(int _width)
+{
+    actualWidth = _width;
+}
+
+void LTexture::setActualHeight(int _height)
+{
+    actualHeight = _height;
+}
+
+SDL_Texture* LTexture::getTexture()
+{
+    return texture;
+}
+
+int LTexture::getFrames()
+{
+    return nframes;
+}
 
 
 

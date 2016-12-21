@@ -39,46 +39,14 @@ public:
     void setBlendMode(SDL_BlendMode blending);
     void setAlpha(Uint8 alpha);
 
-    int getTextureWidth()
-    {
-        return textureWidth;
-    }
-    
-    int getTextureHeight()
-    {
-        return textureHeight;
-    }
-    
-    int getActualWidth()
-    {
-        return actualWidth;
-    }
-    
-    int getActualHeight()
-    {
-        return actualHeight;
-    }
-    
-    void setActualWidth(int _width)
-    {
-        actualWidth = _width;
-    }
-    
-    void setActualHeight(int _height)
-    {
-        actualHeight = _height;
-    }
-    
-    SDL_Texture* getTexture()
-    {
-        return texture;
-    }
-    
-    int getFrames()
-    {
-        return nframes;
-    }
-
+    int getTextureWidth();
+    int getTextureHeight();
+    int getActualWidth();
+    int getActualHeight();
+    void setActualWidth(int _width);
+    void setActualHeight(int _height);
+    SDL_Texture* getTexture();
+    int getFrames();
 };
 
 

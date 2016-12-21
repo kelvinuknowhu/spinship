@@ -1,6 +1,8 @@
-# Spaceship Battle Game
+# Spinship!
 
-The program served as the first step of my final project for the game class, which enabled two users to control their own spaceship to battle against each other. Notably, each spaceship is equipped with several small flocking spaceships for the purpose of attack assistance.
+Spinship is a spaceship battle game that was written in C++ and SDL 2. The graphics were created by an excellent visual artist Kenny (www.kenney.nl). It is called Spinship because the user can quickly spin the spaceship that he/she is controlling and satellite planes are spinning around the mother aircraft.
+
+- [Video demo](https://vimeo.com/195446900)
 
 - Screenshot of the most updated version:
 ![Demo 1](https://raw.githubusercontent.com/kelvinhu9988/spaceship-battle-game/master/Demo_Draft_2-1.png)
