@@ -34,7 +34,7 @@ public:
     float initialSpeedArray[4]      = { 90, 30, 150, 60 };
     float maxSpeedArray[4]          = { 900, 300, 1500, 600 };
     float accelerationArray[4]      = { 180, 60, 300, 120 };
-    float deaccelerationArray[4]    = { 540, 180, 900, 360 };
+    float decelerationArray[4]    = { 540, 180, 900, 360 };
     float frictionArray[4]          = { 36, 12, 60, 24 };
     float healthArray[4]            = { 150, 250, 50, 100 };
     int powerArray[4]               = { 3, 5, 1, 2 };

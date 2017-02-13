@@ -714,7 +714,7 @@ int main(int argc, const char * argv[])
                     leader1->setInitialSpeed(it.initialSpeedArray[rightIndex]);
                     leader1->setMaxSpeed(it.maxSpeedArray[rightIndex]);
                     leader1->setAcceleration(it.accelerationArray[rightIndex]);
-                    leader1->setDeacceleration(it.deaccelerationArray[rightIndex]);
+                    leader1->setDeacceleration(it.decelerationArray[rightIndex]);
                     leader1->setFriction(it.frictionArray[rightIndex]);
                     
                     leader1->setBulletLevel(1);
@@ -733,7 +733,7 @@ int main(int argc, const char * argv[])
                     leader2->setInitialSpeed(it.initialSpeedArray[rightIndex]);
                     leader2->setMaxSpeed(it.maxSpeedArray[rightIndex]);
                     leader2->setAcceleration(it.accelerationArray[rightIndex]);
-                    leader2->setDeacceleration(it.deaccelerationArray[rightIndex]);
+                    leader2->setDeacceleration(it.decelerationArray[rightIndex]);
                     leader2->setFriction(it.frictionArray[rightIndex]);
 
                     leader2->setBulletLevel(1);

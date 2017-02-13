@@ -50,6 +50,4 @@ public:
 };
 
 
-
-
 #endif /* LTexture_h */

@@ -27,7 +27,7 @@ public:
     float speed = 0;
     float initialSpeed = 0;
     float acceleration = 0;
-    float deacceleration = 0;
+    float deceleration = 0;
     float friction = 0;
     float maxSpeed = 0;
     float radian = 0;
@@ -117,7 +117,7 @@ public:
         }
         else if (dir == -1)
         {
-            this->speed -= deacceleration * ticks;
+            this->speed -= deceleration * ticks;
         }
         
         if (this->speed > maxSpeed)
@@ -197,9 +197,9 @@ public:
         this->acceleration = _acceleration;
     }
     
-    void setDeacceleration(float _deacceleration)
+    void setDeacceleration(float _deceleration)
     {
-        this->deacceleration = _deacceleration;
+        this->deceleration = _deceleration;
     }
     
     void setFriction(float _friction)

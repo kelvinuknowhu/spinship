@@ -13,7 +13,8 @@ using namespace std;
 
 float BonusEntity::globalPrevious  = 0;
 float BonusEntity::globalCounter   = 0;
-float BonusEntity::globalThreshold = 1;
+float BonusEntity::
+= 1;
 int   BonusEntity::maxNumObjects   = 1;
 
 string BonusEntity::colorArray[3]     = { "blue", "green", "red" };
